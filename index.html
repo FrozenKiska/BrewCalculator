@@ -1,471 +1,570 @@
 <!DOCTYPE html>
 
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор кофе</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-          * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-          }
-      body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-          background: var(--tg-theme-bg-color, #f9f6f3);
-          color: var(--tg-theme-text-color, #000);
-          padding: 16px;
-          padding-bottom: 80px;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      .container {
-          max-width: 500px;
-          margin: 0 auto;
-          background: var(--tg-theme-secondary-bg-color, #fff);
-          padding: 20px;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: var(--tg-theme-bg-color, #f9f6f3);
+        color: var(--tg-theme-text-color, #000);
+        padding: 16px;
+        padding-bottom: 80px;
+    }
 
-      h1 {
-          text-align: center;
-          color: var(--tg-theme-text-color, #6b4f3f);
-          margin-bottom: 20px;
-          font-size: 24px;
-      }
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+        background: var(--tg-theme-secondary-bg-color, #fff);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-      .input-group {
-          margin-bottom: 16px;
-      }
+    h1 {
+        text-align: center;
+        color: var(--tg-theme-text-color, #6b4f3f);
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
 
-      label {
-          display: block;
-          margin-bottom: 6px;
-          font-weight: 600;
-          font-size: 14px;
-          color: var(--tg-theme-text-color, #333);
-      }
+    .input-group {
+        margin-bottom: 16px;
+    }
 
-      input, select {
-          width: 100%;
-          padding: 12px;
-          border: 1px solid var(--tg-theme-hint-color, #ccc);
-          border-radius: 8px;
-          font-size: 16px;
-          background: var(--tg-theme-bg-color, #fff);
-          color: var(--tg-theme-text-color, #000);
-          transition: border-color 0.3s;
-      }
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--tg-theme-text-color, #333);
+    }
 
-      input:focus, select:focus {
-          outline: none;
-          border-color: var(--tg-theme-button-color, #6b4f3f);
-      }
+    input, select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--tg-theme-hint-color, #ccc);
+        border-radius: 8px;
+        font-size: 16px;
+        background: var(--tg-theme-bg-color, #fff);
+        color: var(--tg-theme-text-color, #000);
+        transition: border-color 0.3s;
+    }
 
-      button {
-          width: 100%;
-          padding: 14px;
-          background: var(--tg-theme-button-color, #6b4f3f);
-          color: var(--tg-theme-button-text-color, #fff);
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 16px;
-          font-weight: 600;
-          transition: opacity 0.3s;
-          margin-top: 20px;
-      }
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--tg-theme-button-color, #6b4f3f);
+    }
 
-      button:active {
-          opacity: 0.8;
-      }
+    button {
+        width: 100%;
+        padding: 14px;
+        background: var(--tg-theme-button-color, #6b4f3f);
+        color: var(--tg-theme-button-text-color, #fff);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: opacity 0.3s;
+        margin-top: 20px;
+    }
 
-      .results {
-          margin-top: 20px;
-          background: var(--tg-theme-bg-color, #f3ece7);
-          padding: 16px;
-          border-radius: 10px;
-          display: none;
-          animation: slideIn 0.3s ease;
-      }
+    button:active {
+        opacity: 0.8;
+    }
 
-      @keyframes slideIn {
-          from {
-              opacity: 0;
-              transform: translateY(-10px);
-          }
-          to {
-              opacity: 1;
-              transform: translateY(0);
-          }
-      }
+    .results {
+        margin-top: 20px;
+        background: var(--tg-theme-bg-color, #f3ece7);
+        padding: 16px;
+        border-radius: 10px;
+        display: none;
+        animation: slideIn 0.3s ease;
+    }
 
-      .results.show {
-          display: block;
-      }
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-      .results h3 {
-          margin-bottom: 12px;
-          color: var(--tg-theme-text-color, #6b4f3f);
-          font-size: 18px;
-      }
+    .results.show {
+        display: block;
+    }
 
-      .results h4 {
-          margin-top: 16px;
-          margin-bottom: 8px;
-          color: var(--tg-theme-text-color, #6b4f3f);
-          font-size: 16px;
-      }
+    .results h3 {
+        margin-bottom: 12px;
+        color: var(--tg-theme-text-color, #6b4f3f);
+        font-size: 18px;
+    }
 
-      .results p {
-          margin: 8px 0;
-          line-height: 1.5;
-          font-size: 15px;
-      }
+    .results h4 {
+        margin-top: 16px;
+        margin-bottom: 8px;
+        color: var(--tg-theme-text-color, #6b4f3f);
+        font-size: 16px;
+    }
 
-      .results strong {
-          color: var(--tg-theme-link-color, #6b4f3f);
-      }
+    .results p {
+        margin: 8px 0;
+        line-height: 1.5;
+        font-size: 15px;
+    }
 
-      .hidden {
-          display: none;
-      }
+    .results strong {
+        color: var(--tg-theme-link-color, #6b4f3f);
+    }
 
-      /* Темная тема */
-      body.dark-theme {
-          background: #1a1a1a;
-      }
+    .hidden {
+        display: none;
+    }
 
-      body.dark-theme .container {
-          background: #2a2a2a;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      }
+    /* Темная тема */
+    body.dark-theme {
+        background: #1a1a1a;
+    }
 
-      body.dark-theme input,
-      body.dark-theme select {
-          background: #1a1a1a;
-          border-color: #444;
-      }
+    body.dark-theme .container {
+        background: #2a2a2a;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
 
-      body.dark-theme .results {
-          background: #1a1a1a;
-      }
-    </style>
-  </head>
-  <body>
+    body.dark-theme input,
+    body.dark-theme select {
+        background: #1a1a1a;
+        border-color: #444;
+    }
+
+    body.dark-theme .results {
+        background: #1a1a1a;
+    }
+</style>
+```
+
+</head>
+<body>
     <div class="container">
-      <h1>☕ Калькулятор кофе</h1>
-      <div class="input-group">
+        <h1>☕ Калькулятор кофе</h1>
+
+```
+    <div class="input-group">
         <label for="method">Метод заваривания:</label>
         <select id="method" onchange="toggleMethodFields()">
-          <option value="v60">V60 (Пуровер)</option>
-          <option value="aeropress">Aeropress</option>
+            <option value="v60">V60 (Пуровер)</option>
+            <option value="aeropress">Aeropress</option>
+            <option value="coldbrew">Cold Brew</option>
         </select>
-      </div>
+    </div>
 
-      <div class="input-group" id="aeropress-style-group" style="display:none;">
+    <div class="input-group" id="aeropress-style-group" style="display:none;">
         <label for="aeropressStyle">Стиль аэропресса:</label>
         <select id="aeropressStyle">
-          <option value="concentrate">Концентрат + разбавление</option>
-          <option value="direct">Прямое заваривание</option>
+            <option value="concentrate">Концентрат + разбавление</option>
+            <option value="direct">Прямое заваривание</option>
         </select>
-      </div>
+    </div>
 
-      <div class="input-group">
+    <div class="input-group" id="coldbrew-style-group" style="display:none;">
+        <label for="coldbrewStyle">Стиль колдбрю:</label>
+        <select id="coldbrewStyle">
+            <option value="classic">Классический (концентрат)</option>
+            <option value="flash">Флэш брю (с льдом)</option>
+        </select>
+    </div>
+
+    <div class="input-group" id="coldbrew-time-group" style="display:none;">
+        <label for="coldbrewTime">Время заваривания:</label>
+        <select id="coldbrewTime">
+            <option value="12">12 часов</option>
+            <option value="16" selected>16 часов</option>
+            <option value="24">24 часа</option>
+        </select>
+    </div>
+
+    <div class="input-group">
         <label for="grinder">Кофемолка:</label>
         <select id="grinder">
-          <option value="timemore_c3">Timemore C3</option>
-          <option value="comandante">Comandante (red clix)</option>
-          <option value="1zpresso_jx">1Zpresso JX</option>
-          <option value="1zpresso_je">1Zpresso JE</option>
+            <option value="timemore_c3">Timemore C3</option>
+            <option value="comandante">Comandante (red clix)</option>
+            <option value="1zpresso_jx">1Zpresso JX</option>
+            <option value="1zpresso_je">1Zpresso JE</option>
         </select>
-      </div>
-
-      <div class="input-group">
+    </div>
+    
+    <div class="input-group">
         <label for="volume">Желаемый объем напитка (мл):</label>
-        <input
-          type="number"
-          id="volume"
-          value="300"
-          min="100"
-          max="1000"
-          step="10"
-        />
-      </div>
-
-      <div class="input-group">
+        <input type="number" id="volume" value="300" min="100" max="1000" step="10">
+    </div>
+    
+    <div class="input-group">
         <label for="country">Страна происхождения:</label>
         <select id="country">
-          <option value="ethiopia">🇪🇹 Эфиопия</option>
-          <option value="kenya">🇰🇪 Кения</option>
-          <option value="brazil">🇧🇷 Бразилия</option>
+            <option value="ethiopia">🇪🇹 Эфиопия</option>
+            <option value="kenya">🇰🇪 Кения</option>
+            <option value="brazil">🇧🇷 Бразилия</option>
         </select>
-      </div>
+    </div>
 
-      <div class="input-group">
+    <div class="input-group">
         <label for="process">Метод обработки:</label>
         <select id="process">
-          <option value="washed">Мытая</option>
-          <option value="natural">Натуральная</option>
-          <option value="honey">Хани</option>
+            <option value="washed">Мытая</option>
+            <option value="natural">Натуральная</option>
+            <option value="honey">Хани</option>
         </select>
-      </div>
-
-      <div class="input-group">
-        <label for="days">Дней после обжарки:</label>
-        <input type="number" id="days" value="7" min="0" max="30" />
-      </div>
-
-      <button onclick="calculate()">Рассчитать рецепт</button>
-
-      <div class="results" id="results"></div>
     </div>
-    <script>
-      // Инициализация Telegram Web App
-      let tg = window.Telegram.WebApp;
 
-      tg.expand();
-      tg.enableClosingConfirmation();
+    <div class="input-group">
+        <label for="days">Дней после обжарки:</label>
+        <input type="number" id="days" value="7" min="0" max="30">
+    </div>
 
-      if (tg.colorScheme === 'dark') {
-          document.body.classList.add('dark-theme');
-      }
+    <button onclick="calculate()">Рассчитать рецепт</button>
 
-      tg.MainButton.setText('Закрыть');
-      tg.MainButton.hide();
-      tg.MainButton.onClick(function() {
-          tg.close();
-      });
+    <div class="results" id="results"></div>
+</div>
+```
 
-      // Настройки помола для разных кофемолок
-      const grinderSettings = {
-          timemore_c3: {
-              v60: 17,      // среднее между 16-18
-              aeropress: 14  // среднее между 13-15
-          },
-          comandante: {
-              v60: 41,       // среднее между 34,43,46
-              aeropress: 29
-          },
-          '1zpresso_jx': {
-              v60: 73,       // среднее между 58-60, 63-66, 91-93
-              aeropress: 54  // среднее между 53-54
-          },
-          '1zpresso_je': {
-              v60: 82,       // среднее между 70-80, 83-85, 91-93
-              aeropress: 73  // среднее между 72-74
-          }
-      };
+<script>
+    // Инициализация Telegram Web App
+    let tg = window.Telegram.WebApp;
+    
+    tg.expand();
+    tg.enableClosingConfirmation();
+    
+    if (tg.colorScheme === 'dark') {
+        document.body.classList.add('dark-theme');
+    }
 
-      function toggleMethodFields() {
-          const method = document.getElementById('method').value;
-          const aeropressStyleGroup = document.getElementById('aeropress-style-group');
+    tg.MainButton.setText('Закрыть');
+    tg.MainButton.hide();
+    tg.MainButton.onClick(function() {
+        tg.close();
+    });
 
-          if (method === 'aeropress') {
-              aeropressStyleGroup.style.display = 'block';
-          } else {
-              aeropressStyleGroup.style.display = 'none';
-          }
-      }
+    // Настройки помола для разных кофемолок
+    const grinderSettings = {
+        timemore_c3: {
+            v60: 17,
+            aeropress: 14,
+            coldbrew: Math.round(17 * 1.3) // +30% от V60
+        },
+        comandante: {
+            v60: 41,
+            aeropress: 29,
+            coldbrew: Math.round(41 * 1.3)
+        },
+        '1zpresso_jx': {
+            v60: 73,
+            aeropress: 54,
+            coldbrew: Math.round(73 * 1.3)
+        },
+        '1zpresso_je': {
+            v60: 82,
+            aeropress: 73,
+            coldbrew: Math.round(82 * 1.3)
+        }
+    };
 
-      function calculate() {
-          if (tg.HapticFeedback) {
-              tg.HapticFeedback.impactOccurred('light');
-          }
+    function toggleMethodFields() {
+        const method = document.getElementById('method').value;
+        const aeropressStyleGroup = document.getElementById('aeropress-style-group');
+        const coldbrewStyleGroup = document.getElementById('coldbrew-style-group');
+        const coldbrewTimeGroup = document.getElementById('coldbrew-time-group');
+        
+        aeropressStyleGroup.style.display = 'none';
+        coldbrewStyleGroup.style.display = 'none';
+        coldbrewTimeGroup.style.display = 'none';
+        
+        if (method === 'aeropress') {
+            aeropressStyleGroup.style.display = 'block';
+        } else if (method === 'coldbrew') {
+            coldbrewStyleGroup.style.display = 'block';
+            coldbrewTimeGroup.style.display = 'block';
+        }
+    }
 
-          let method = document.getElementById('method').value;
-          let aeropressStyle = document.getElementById('aeropressStyle').value;
-          let grinder = document.getElementById('grinder').value;
-          let volume = parseFloat(document.getElementById('volume').value);
-          let country = document.getElementById('country').value;
-          let process = document.getElementById('process').value;
-          let days = parseInt(document.getElementById('days').value);
+    function calculate() {
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
+        }
 
-          let resultHTML = '';
+        let method = document.getElementById('method').value;
+        let aeropressStyle = document.getElementById('aeropressStyle').value;
+        let coldbrewStyle = document.getElementById('coldbrewStyle').value;
+        let coldbrewTime = document.getElementById('coldbrewTime').value;
+        let grinder = document.getElementById('grinder').value;
+        let volume = parseFloat(document.getElementById('volume').value);
+        let country = document.getElementById('country').value;
+        let process = document.getElementById('process').value;
+        let days = parseInt(document.getElementById('days').value);
 
-          if (method === 'v60') {
-              resultHTML = calculateV60(grinder, volume, country, process, days);
-          } else if (method === 'aeropress') {
-              resultHTML = calculateAeropress(grinder, volume, country, process, days, aeropressStyle);
-          }
+        let resultHTML = '';
 
-          let resultsDiv = document.getElementById('results');
-          resultsDiv.innerHTML = resultHTML;
-          resultsDiv.classList.add('show');
+        if (method === 'v60') {
+            resultHTML = calculateV60(grinder, volume, country, process, days);
+        } else if (method === 'aeropress') {
+            resultHTML = calculateAeropress(grinder, volume, country, process, days, aeropressStyle);
+        } else if (method === 'coldbrew') {
+            resultHTML = calculateColdBrew(grinder, volume, country, process, days, coldbrewStyle, coldbrewTime);
+        }
 
-          tg.MainButton.show();
+        let resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = resultHTML;
+        resultsDiv.classList.add('show');
 
-          if (tg.HapticFeedback) {
-              tg.HapticFeedback.notificationOccurred('success');
-          }
-      }
+        tg.MainButton.show();
 
-      function calculateV60(grinder, volume, country, process, days) {
-          // Базовые значения
-          let ratio = 16;
-          let baseTemp = 93;
-          let baseGrind = grinderSettings[grinder].v60;
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+    }
 
-          // Корректировка по стране
-          if (country === "ethiopia") {
-              baseTemp += 1;
-          } else if (country === "kenya") {
-              baseTemp += 2;
-          } else if (country === "brazil") {
-              baseTemp -= 1;
-              ratio = 15;
-          }
+    function calculateV60(grinder, volume, country, process, days) {
+        let ratio = 16;
+        let baseTemp = 93;
+        let baseGrind = grinderSettings[grinder].v60;
 
-          // Корректировка по обработке
-          if (process === "natural") {
-              baseTemp -= 1;
-              baseGrind += 1;
-          } else if (process === "honey") {
-              baseTemp -= 0.5;
-          }
+        if (country === "ethiopia") {
+            baseTemp += 1;
+        } else if (country === "kenya") {
+            baseTemp += 2;
+        } else if (country === "brazil") {
+            baseTemp -= 1;
+            ratio = 15;
+        }
 
-          // Корректировка по свежести
-          if (days <= 5) {
-              baseGrind += 1;
-              baseTemp += 1;
-          } else if (days >= 15) {
-              baseGrind -= 1;
-              baseTemp -= 1;
-          }
+        if (process === "natural") {
+            baseTemp -= 1;
+            baseGrind += 1;
+        } else if (process === "honey") {
+            baseTemp -= 0.5;
+        }
 
-          // Итоговые расчёты
-          let coffeeWeight = Math.round(volume / ratio * 10) / 10;
+        if (days <= 5) {
+            baseGrind += 1;
+            baseTemp += 1;
+        } else if (days >= 15) {
+            baseGrind -= 1;
+            baseTemp -= 1;
+        }
 
-          // Тайминги заливов
-          let bloom = coffeeWeight * 2;
-          let firstPour = volume * 0.40;
-          let secondPour = volume * 0.70;
-          let finalPour = volume;
+        let coffeeWeight = Math.round(volume / ratio * 10) / 10;
+        let bloom = coffeeWeight * 2;
+        let firstPour = volume * 0.40;
+        let secondPour = volume * 0.70;
+        let finalPour = volume;
 
-          let grinderName = getGrinderName(grinder);
+        let grinderName = getGrinderName(grinder);
 
-          return `
-              <h3>📊 Результат для V60</h3>
-              <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-              <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
-              <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-              <br>
-              <h4>💧 Этапы заливки:</h4>
-              <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> (30 секунд)</p>
-              <p>2️⃣ Первый залив до: <strong>${Math.round(firstPour)} мл</strong></p>
-              <p>3️⃣ Второй залив до: <strong>${Math.round(secondPour)} мл</strong></p>
-              <p>4️⃣ Финальный залив до: <strong>${Math.round(finalPour)} мл</strong></p>
-          `;
-      }
+        return `
+            <h3>📊 Результат для V60</h3>
+            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+            <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
+            <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <p>⏱️ Общее время: <strong>~3:00-3:30</strong></p>
+            <br>
+            <h4>💧 Этапы заливки с таймингом:</h4>
+            <p>1️⃣ <strong>0:00</strong> - Блюминг: <strong>${Math.round(bloom)} мл</strong>, подождать до 0:30</p>
+            <p>2️⃣ <strong>0:30</strong> - Первый залив до <strong>${Math.round(firstPour)} мл</strong> (закончить к ~1:15)</p>
+            <p>3️⃣ <strong>1:15</strong> - Второй залив до <strong>${Math.round(secondPour)} мл</strong> (закончить к ~2:00)</p>
+            <p>4️⃣ <strong>2:00</strong> - Финальный залив до <strong>${Math.round(finalPour)} мл</strong> (закончить к ~2:30)</p>
+            <p>5️⃣ <strong>~3:00-3:30</strong> - Вся вода должна пройти</p>
+        `;
+    }
 
-      function calculateAeropress(grinder, volume, country, process, days, style) {
-          // Базовые значения для аэропресса
-          let baseTemp = 88;
-          let baseGrind = grinderSettings[grinder].aeropress;
+    function calculateAeropress(grinder, volume, country, process, days, style) {
+        let baseTemp = 88;
+        let baseGrind = grinderSettings[grinder].aeropress;
 
-          // Корректировка по стране
-          if (country === "ethiopia") {
-              baseTemp += 1;
-          } else if (country === "kenya") {
-              baseTemp += 2;
-          } else if (country === "brazil") {
-              baseTemp -= 1;
-          }
+        if (country === "ethiopia") {
+            baseTemp += 1;
+        } else if (country === "kenya") {
+            baseTemp += 2;
+        } else if (country === "brazil") {
+            baseTemp -= 1;
+        }
 
-          // Корректировка по обработке
-          if (process === "natural") {
-              baseTemp -= 1;
-              baseGrind += 1;
-          } else if (process === "honey") {
-              baseTemp -= 0.5;
-          }
+        if (process === "natural") {
+            baseTemp -= 1;
+            baseGrind += 1;
+        } else if (process === "honey") {
+            baseTemp -= 0.5;
+        }
 
-          // Корректировка по свежести
-          if (days <= 5) {
-              baseGrind += 1;
-              baseTemp += 1;
-          } else if (days >= 15) {
-              baseGrind -= 1;
-              baseTemp -= 1;
-          }
+        if (days <= 5) {
+            baseGrind += 1;
+            baseTemp += 1;
+        } else if (days >= 15) {
+            baseGrind -= 1;
+            baseTemp -= 1;
+        }
 
-          let grinderName = getGrinderName(grinder);
+        let grinderName = getGrinderName(grinder);
 
-          if (style === 'concentrate') {
-              // Концентрат + разбавление (на основе рецептов чемпионов)
-              let coffeeWeight = 18;
-              let brewWater = Math.round(coffeeWeight * 11); // ~1:11 для концентрата
-              let bloom = coffeeWeight * 2.8; // ~50г
-              let secondPour = brewWater;
-              let concentrate = Math.round(coffeeWeight * 4.2); // ~75г концентрата
-              let dilution = volume - concentrate;
+        if (style === 'concentrate') {
+            let coffeeWeight = 18;
+            let brewWater = Math.round(coffeeWeight * 11);
+            let bloom = coffeeWeight * 2.8;
+            let secondPour = brewWater;
+            let concentrate = Math.round(coffeeWeight * 4.2);
+            let dilution = volume - concentrate;
 
-              return `
-                  <h3>📊 Результат для Aeropress</h3>
-                  <p><em>Стиль: Концентрат + разбавление</em></p>
-                  <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                  <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
-                  <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-                  <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
-                  <br>
-                  <h4>💧 Этапы приготовления:</h4>
-                  <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
-                  <p>2️⃣ Долив до: <strong>${Math.round(secondPour)} мл</strong></p>
-                  <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
-                  <p>4️⃣ Переворот и прессование: <strong>30 сек</strong></p>
-                  <p>5️⃣ Получится концентрат: <strong>~${concentrate} мл</strong></p>
-                  <p>6️⃣ Разбавить водой: <strong>+${Math.round(dilution)} мл</strong> до ${volume} мл</p>
-              `;
-          } else {
-              // Прямое заваривание
-              let ratio = 15; // более крепкое соотношение для аэропресса
-              let coffeeWeight = Math.round(volume / ratio * 10) / 10;
-              let bloom = coffeeWeight * 2.8;
-              let totalWater = volume;
+            return `
+                <h3>📊 Результат для Aeropress</h3>
+                <p><em>Стиль: Концентрат + разбавление</em></p>
+                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+                <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
+                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+                <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
+                <br>
+                <h4>💧 Этапы приготовления:</h4>
+                <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+                <p>2️⃣ Долив до: <strong>${Math.round(secondPour)} мл</strong></p>
+                <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
+                <p>4️⃣ Переворот и прессование: <strong>30 сек</strong></p>
+                <p>5️⃣ Получится концентрат: <strong>~${concentrate} мл</strong></p>
+                <p>6️⃣ Разбавить водой: <strong>+${Math.round(dilution)} мл</strong> до ${volume} мл</p>
+            `;
+        } else {
+            let ratio = 15;
+            let coffeeWeight = Math.round(volume / ratio * 10) / 10;
+            let bloom = coffeeWeight * 2.8;
+            let totalWater = volume;
 
-              return `
-                  <h3>📊 Результат для Aeropress</h3>
-                  <p><em>Стиль: Прямое заваривание</em></p>
-                  <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                  <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
-                  <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-                  <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
-                  <br>
-                  <h4>💧 Этапы приготовления:</h4>
-                  <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
-                  <p>2️⃣ Долив до: <strong>${Math.round(totalWater)} мл</strong></p>
-                  <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
-                  <p>4️⃣ Переворот и прессование: <strong>30-40 сек</strong></p>
-                  <p>5️⃣ Готовый напиток: <strong>${volume} мл</strong></p>
-              `;
-          }
-      }
+            return `
+                <h3>📊 Результат для Aeropress</h3>
+                <p><em>Стиль: Прямое заваривание</em></p>
+                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+                <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
+                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+                <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
+                <br>
+                <h4>💧 Этапы приготовления:</h4>
+                <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+                <p>2️⃣ Долив до: <strong>${Math.round(totalWater)} мл</strong></p>
+                <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
+                <p>4️⃣ Переворот и прессование: <strong>30-40 сек</strong></p>
+                <p>5️⃣ Готовый напиток: <strong>${volume} мл</strong></p>
+            `;
+        }
+    }
 
-      function getGrinderName(grinder) {
-          const names = {
-              'timemore_c3': 'Timemore C3',
-              'comandante': 'Comandante',
-              '1zpresso_jx': '1Zpresso JX',
-              '1zpresso_je': '1Zpresso JE'
-          };
-          return names[grinder] || grinder;
-      }
+    function calculateColdBrew(grinder, volume, country, process, days, style, brewTime) {
+        let baseGrind = grinderSettings[grinder].coldbrew;
+        let grinderName = getGrinderName(grinder);
 
-      // Автоматический расчет при первой загрузке
-      window.onload = function() {
-          calculate();
-      };
+        // Корректировка помола по обработке (для колдбрю меньше влияет)
+        if (process === "natural") {
+            baseGrind += 1;
+        }
 
-      // Обработка изменения темы
-      tg.onEvent('themeChanged', function() {
-          if (tg.colorScheme === 'dark') {
-              document.body.classList.add('dark-theme');
-          } else {
-              document.body.classList.remove('dark-theme');
-          }
-      });
-    </script>
-  </body>
+        if (style === 'classic') {
+            // Классический концентрат
+            let ratio = 8; // 1:8 для концентрата
+            let coffeeWeight = Math.round(volume / ratio * 10) / 10;
+            let waterAmount = volume;
+            let concentrate = volume;
+            let suggestedDilution = Math.round(volume * 0.5); // рекомендуемое разбавление 1:1
+
+            return `
+                <h3>📊 Результат для Cold Brew</h3>
+                <p><em>Стиль: Классический концентрат</em></p>
+                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+                <p>🌡️ Вода: <strong>Комнатная температура (20-25°C)</strong></p>
+                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+                <p>⏰ Время заваривания: <strong>${brewTime} часов</strong></p>
+                <br>
+                <h4>💧 Приготовление:</h4>
+                <p>1️⃣ Смешать кофе с <strong>${Math.round(waterAmount)} мл</strong> воды</p>
+                <p>2️⃣ Поставить в холодильник на <strong>${brewTime} часов</strong></p>
+                <p>3️⃣ Отфильтровать через бумажный фильтр</p>
+                <p>4️⃣ Получится концентрат: <strong>~${Math.round(concentrate * 0.85)} мл</strong></p>
+                <br>
+                <h4>🥤 Подача:</h4>
+                <p>💡 Разбавить водой/молоком <strong>1:1</strong> (добавить ~${suggestedDilution} мл)</p>
+                <p>🧊 Добавить лёд по вкусу</p>
+                <p>📦 Хранить концентрат в холодильнике до 2 недель</p>
+            `;
+        } else {
+            // Флэш брю (японский метод)
+            let ratio = 15; // как для обычного заваривания
+            let totalVolume = volume;
+            let iceWeight = Math.round(volume * 0.4); // 40% - лёд
+            let hotWater = volume - iceWeight; // 60% - горячая вода
+            let coffeeWeight = Math.round(hotWater / ratio * 10) / 10;
+            
+            // Температура для флэш брю
+            let baseTemp = 95; // выше чем обычно
+            if (country === "ethiopia") {
+                baseTemp += 1;
+            } else if (country === "kenya") {
+                baseTemp += 1;
+            }
+
+            let bloom = coffeeWeight * 2;
+
+            return `
+                <h3>📊 Результат для Cold Brew</h3>
+                <p><em>Стиль: Флэш брю (японский метод)</em></p>
+                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+                <p>🌡️ Температура воды: <strong>${baseTemp}°C</strong></p>
+                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+                <p>🧊 Лёд: <strong>${iceWeight} г</strong></p>
+                <br>
+                <h4>💧 Приготовление:</h4>
+                <p>1️⃣ Положить <strong>${iceWeight} г льда</strong> в сервер</p>
+                <p>2️⃣ Установить дриппер с кофе над сервером</p>
+                <p>3️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+                <p>4️⃣ Залить остальную воду: <strong>${Math.round(hotWater)} мл</strong> горячей воды</p>
+                <p>5️⃣ Кофе сразу охлаждается, падая на лёд</p>
+                <p>6️⃣ Готовый напиток: <strong>${totalVolume} мл</strong></p>
+                <br>
+                <h4>🥤 Результат:</h4>
+                <p>✨ Яркий, ароматный холодный кофе за 3-4 минуты</p>
+                <p>🧊 Сразу готов к употреблению</p>
+            `;
+        }
+    }
+
+    function getGrinderName(grinder) {
+        const names = {
+            'timemore_c3': 'Timemore C3',
+            'comandante': 'Comandante',
+            '1zpresso_jx': '1Zpresso JX',
+            '1zpresso_je': '1Zpresso JE'
+        };
+        return names[grinder] || grinder;
+    }
+
+    window.onload = function() {
+        calculate();
+    };
+
+    tg.onEvent('themeChanged', function() {
+        if (tg.colorScheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    });
+</script>
+
+</body>
 </html>
