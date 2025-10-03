@@ -624,3 +624,98 @@
             let iceWeight = Math.round(volume * 0.4);
             let hotWater = volume - iceWeight;
             let coffeeWeight = Math.round(hotWater / ratio * 10) / 10;
+            
+            let baseTemp = 95;
+            baseTemp += countryData.tempDelta;
+
+            let bloom = coffeeWeight * 2;
+
+            lastRecipeText = `☕ Рецепт Cold Brew (флэш брю)\n\n` +
+                `Кофе: ${coffeeWeight} г\n` +
+                `Страна: ${countryData.name}\n` +
+                `Обработка: ${getProcessName(process)}\n` +
+                `Температура: ${baseTemp}°C\n` +
+                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
+                `Лёд: ${iceWeight} г\n` +
+                `Горячая вода: ${Math.round(hotWater)} мл`;
+
+            return `
+                <h3>📊 Результат для Cold Brew</h3>
+                <p><em>Стиль: Флэш брю (японский метод)</em></p>
+                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
+                <p>🌡️ Температура воды: <strong>${baseTemp}°C</strong></p>
+                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+                <p>🧊 Лёд: <strong>${iceWeight} г</strong></p>
+                <br>
+                <h4>💧 Приготовление:</h4>
+                <p>1️⃣ Положить <strong>${iceWeight} г льда</strong> в сервер</p>
+                <p>2️⃣ Установить дриппер с кофе над сервером</p>
+                <p>3️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+                <p>4️⃣ Залить остальную воду: <strong>${Math.round(hotWater)} мл</strong> горячей воды</p>
+                <p>5️⃣ Кофе сразу охлаждается, падая на лёд</p>
+                <p>6️⃣ Готовый напиток: <strong>${totalVolume} мл</strong></p>
+                <br>
+                <h4>🥤 Результат:</h4>
+                <p>✨ Яркий, ароматный холодный кофе за 3-4 минуты</p>
+                <p>🧊 Сразу готов к употреблению</p>
+            `;
+        }
+    }
+
+    function getGrinderName(grinder) {
+        const names = {
+            'timemore_c3': 'Timemore C3',
+            'comandante': 'Comandante',
+            '1zpresso_jx': '1Zpresso JX',
+            '1zpresso_je': '1Zpresso JE'
+        };
+        return names[grinder] || grinder;
+    }
+
+    function getProcessName(process) {
+        const names = {
+            'washed': 'Мытая',
+            'natural': 'Натуральная',
+            'honey': 'Хани'
+        };
+        return names[process] || process;
+    }
+
+    function shareRecipe() {
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        if (lastRecipeText) {
+            // Отправляем рецепт как текстовое сообщение в чат
+            const shareText = lastRecipeText + '\n\n🤖 Создано с помощью Coffee Calculator';
+            
+            // Используем Telegram API для отправки сообщения
+            tg.sendData(JSON.stringify({
+                action: 'share_recipe',
+                recipe: shareText
+            }));
+
+            // Альтернативный вариант - открыть диалог отправки
+            const encodedText = encodeURIComponent(shareText);
+            const shareUrl = `https://t.me/share/url?url=&text=${encodedText}`;
+            tg.openLink(shareUrl);
+        }
+    }
+
+    window.onload = function() {
+        calculate();
+    };
+
+    tg.onEvent('themeChanged', function() {
+        if (tg.colorScheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    });
+</script>
+
+</body>
+</html>
