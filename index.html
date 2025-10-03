@@ -226,6 +226,7 @@
       <option value="yemen">🇾🇪 Йемен</option>
       <option value="indonesia">🇮🇩 Индонезия</option>
       <option value="rwanda">🇷🇼 Руанда</option>
+      <option value="peru">🇵🇪 Перу</option>
       <option value="burundi">🇧🇮 Бурунди</option>
       <option value="mexico">🇲🇽 Мексика</option>
   </select>
@@ -307,7 +308,8 @@ const originAdjust = {
     indonesia:  { temp: -1, grind:  1   },
     rwanda:     { temp:  1, grind: -0.5 },
     burundi:    { temp:  1, grind: -0.5 },
-    mexico:     { temp:  0, grind:  0.5 }
+    mexico:     { temp:  0, grind:  0.5 },
+    peru: { temp: -0.5, grind: 0.5 }
 };
 
     function toggleMethodFields() {
@@ -327,6 +329,53 @@ const originAdjust = {
             coldbrewTimeGroup.style.display = 'block';
         }
     }
+function calculateRecipe(method, volume) {
+  let coffee_g, steps = [], finishTime = 0;
+
+  if (method === "V60") {
+    const ratio = 16;
+    coffee_g = Math.round(volume / ratio);
+
+    // проливы (пример)
+    const bloom = Math.round(coffee_g * 2);
+    steps.push(`Блюминг: ${bloom} мл, 30 сек`);
+
+    const pours = [
+      { pct: 40, t: 45 },
+      { pct: 70, t: 90 },
+      { pct: 100, t: 130 }
+    ];
+
+    let waterSoFar = bloom;
+    pours.forEach((p, i) => {
+      const target_ml = Math.round(volume * (p.pct / 100));
+      const pour_ml = target_ml - waterSoFar;
+      steps.push(`Пролив ${i+1}: +${pour_ml} мл → всего ${target_ml} мл (t≈${p.t} сек)`);
+      waterSoFar = target_ml;
+      finishTime = p.t;
+    });
+
+    finishTime += 30;
+    steps.push(`Окончание экстракции ~${finishTime} сек`);
+  }
+
+  else if (method === "Аэропресс") {
+    const ratio = 15;
+    coffee_g = Math.round(volume / ratio);
+
+    steps.push(`Насыпать ${coffee_g} г кофе`);
+    steps.push(`Залить ${volume} мл воды`);
+    steps.push(`Перемешать, настаивать 90 сек`);
+    steps.push(`Прессовать 30 сек`);
+  }
+
+  // Можно добавлять сюда новые методы (B75, Колдбрю и др.)
+  
+  return {
+    coffee_g,
+    steps
+  };
+}
 
     function calculate() {
         if (tg.HapticFeedback) {
