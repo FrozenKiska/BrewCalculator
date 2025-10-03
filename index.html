@@ -212,14 +212,24 @@
         <input type="number" id="volume" value="300" min="100" max="1000" step="10">
     </div>
     
-    <div class="input-group">
-        <label for="country">Страна происхождения:</label>
-        <select id="country">
-            <option value="ethiopia">🇪🇹 Эфиопия</option>
-            <option value="kenya">🇰🇪 Кения</option>
-            <option value="brazil">🇧🇷 Бразилия</option>
-        </select>
-    </div>
+  <div class="input-group">
+  <label for="country">Страна происхождения:</label>
+  <select id="country">
+      <option value="ethiopia">🇪🇹 Эфиопия</option>
+      <option value="kenya">🇰🇪 Кения</option>
+      <option value="brazil">🇧🇷 Бразилия</option>
+      <option value="colombia">🇨🇴 Колумбия</option>
+      <option value="panama">🇵🇦 Панама</option>
+      <option value="guatemala">🇬🇹 Гватемала</option>
+      <option value="costarica">🇨🇷 Коста-Рика</option>
+      <option value="elsalvador">🇸🇻 Эль-Сальвадор</option>
+      <option value="yemen">🇾🇪 Йемен</option>
+      <option value="indonesia">🇮🇩 Индонезия</option>
+      <option value="rwanda">🇷🇼 Руанда</option>
+      <option value="burundi">🇧🇮 Бурунди</option>
+      <option value="mexico">🇲🇽 Мексика</option>
+  </select>
+</div>
 
     <div class="input-group">
         <label for="process">Метод обработки:</label>
@@ -259,28 +269,46 @@
     });
 
     // Настройки помола для разных кофемолок
-    const grinderSettings = {
-        timemore_c3: {
-            v60: 17,
-            aeropress: 14,
-            coldbrew: Math.round(17 * 1.3) // +30% от V60
-        },
-        comandante: {
-            v60: 41,
-            aeropress: 29,
-            coldbrew: Math.round(41 * 1.3)
-        },
-        '1zpresso_jx': {
-            v60: 73,
-            aeropress: 54,
-            coldbrew: Math.round(73 * 1.3)
-        },
-        '1zpresso_je': {
-            v60: 82,
-            aeropress: 73,
-            coldbrew: Math.round(82 * 1.3)
-        }
-    };
+    // Настройки помола для разных кофемолок
+const grinderSettings = {
+    timemore_c3: {
+        v60: 17,
+        aeropress: 14,
+        coldbrew: Math.round(17 * 1.3)
+    },
+    comandante: {
+        v60: 41,
+        aeropress: 29,
+        coldbrew: Math.round(41 * 1.3)
+    },
+    '1zpresso_jx': {
+        v60: 73,
+        aeropress: 54,
+        coldbrew: Math.round(73 * 1.3)
+    },
+    '1zpresso_je': {
+        v60: 82,
+        aeropress: 73,
+        coldbrew: Math.round(82 * 1.3)
+    }
+};
+
+// 🔽 вот сюда вставляешь
+const originAdjust = {
+    ethiopia:   { temp:  1, grind: -0.5 },
+    kenya:      { temp:  2, grind: -0.5 },
+    brazil:     { temp: -1, grind:  1   },
+    colombia:   { temp:  0, grind:  0   },
+    panama:     { temp:  2, grind: -1   },
+    guatemala:  { temp:  1, grind: -0.5 },
+    costarica:  { temp:  1, grind:  0   },
+    elsalvador: { temp:  0, grind:  0.5 },
+    yemen:      { temp:  2, grind: -1   },
+    indonesia:  { temp: -1, grind:  1   },
+    rwanda:     { temp:  1, grind: -0.5 },
+    burundi:    { temp:  1, grind: -0.5 },
+    mexico:     { temp:  0, grind:  0.5 }
+};
 
     function toggleMethodFields() {
         const method = document.getElementById('method').value;
