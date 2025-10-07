@@ -7,133 +7,96 @@
     <title>Калькулятор кофе</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --coffee-teal: #508A8C;
-            --coffee-dark-teal: #266C62;
-            --coffee-cream: #D4C78F;
-            --coffee-orange: #D2431B;
-            --coffee-brown: #87281B;
-            --coffee-bg-light: #f5f1e8;
-            --coffee-bg-dark: #1a1614;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        background: linear-gradient(135deg, var(--coffee-bg-light) 0%, #e8dcc8 100%);
-        color: var(--coffee-brown);
+        background: var(--tg-theme-bg-color, #f9f6f3);
+        color: var(--tg-theme-text-color, #000);
         padding: 16px;
         padding-bottom: 80px;
-        line-height: 1.6;
-        min-height: 100vh;
     }
 
     .container {
         max-width: 500px;
         margin: 0 auto;
-        background: white;
-        padding: 24px;
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(38, 108, 98, 0.15);
-        border: 1px solid rgba(80, 138, 140, 0.1);
+        background: var(--tg-theme-secondary-bg-color, #fff);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     h1 {
         text-align: center;
-        color: var(--coffee-brown);
-        margin-bottom: 24px;
-        font-size: 28px;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--coffee-brown) 0%, var(--coffee-orange) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: var(--tg-theme-text-color, #6b4f3f);
+        margin-bottom: 20px;
+        font-size: 24px;
     }
 
     .input-group {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
     label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         font-weight: 600;
-        font-size: 15px;
-        color: var(--coffee-brown);
+        font-size: 14px;
+        color: var(--tg-theme-text-color, #333);
     }
 
     input, select {
         width: 100%;
-        padding: 14px;
-        border: 2px solid var(--coffee-teal);
-        border-radius: 12px;
+        padding: 12px;
+        border: 1px solid var(--tg-theme-hint-color, #ccc);
+        border-radius: 8px;
         font-size: 16px;
-        background: white;
-        color: var(--coffee-brown);
-        transition: all 0.3s ease;
+        background: var(--tg-theme-bg-color, #fff);
+        color: var(--tg-theme-text-color, #000);
+        transition: border-color 0.3s;
     }
 
     input:focus, select:focus {
         outline: none;
-        border-color: var(--coffee-orange);
-        box-shadow: 0 0 0 3px rgba(210, 67, 27, 0.1);
+        border-color: var(--tg-theme-button-color, #6b4f3f);
     }
 
     button {
         width: 100%;
-        padding: 16px;
-        background: linear-gradient(135deg, var(--coffee-orange) 0%, var(--coffee-brown) 100%);
-        color: white;
+        padding: 14px;
+        background: var(--tg-theme-button-color, #6b4f3f);
+        color: var(--tg-theme-button-text-color, #fff);
         border: none;
-        border-radius: 12px;
+        border-radius: 8px;
         cursor: pointer;
-        font-size: 17px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        margin-top: 24px;
-        box-shadow: 0 4px 16px rgba(210, 67, 27, 0.3);
-    }
-
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(210, 67, 27, 0.4);
+        font-size: 16px;
+        font-weight: 600;
+        transition: opacity 0.3s;
+        margin-top: 20px;
     }
 
     button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 8px rgba(210, 67, 27, 0.3);
-    }
-
-    .share-button {
-        background: linear-gradient(135deg, var(--coffee-teal) 0%, var(--coffee-dark-teal) 100%);
-        margin-top: 12px;
-        box-shadow: 0 4px 16px rgba(38, 108, 98, 0.3);
-    }
-
-    .share-button:hover {
-        box-shadow: 0 6px 20px rgba(38, 108, 98, 0.4);
+        opacity: 0.8;
     }
 
     .results {
-        margin-top: 24px;
-        background: linear-gradient(135deg, rgba(80, 138, 140, 0.05) 0%, rgba(212, 199, 143, 0.05) 100%);
-        padding: 20px;
-        border-radius: 16px;
+        margin-top: 20px;
+        background: var(--tg-theme-bg-color, #f3ece7);
+        padding: 16px;
+        border-radius: 10px;
         display: none;
-        animation: slideIn 0.4s ease;
-        border: 2px solid var(--coffee-teal);
+        animation: slideIn 0.3s ease;
     }
 
     @keyframes slideIn {
         from {
             opacity: 0;
-            transform: translateY(-20px);
+            transform: translateY(-10px);
         }
         to {
             opacity: 1;
@@ -146,39 +109,26 @@
     }
 
     .results h3 {
-        margin-bottom: 16px;
-        color: var(--coffee-brown);
-        font-size: 20px;
-        font-weight: 700;
-        border-bottom: 2px solid var(--coffee-orange);
-        padding-bottom: 12px;
+        margin-bottom: 12px;
+        color: var(--tg-theme-text-color, #6b4f3f);
+        font-size: 18px;
     }
 
     .results h4 {
-        margin-top: 20px;
-        margin-bottom: 12px;
-        color: var(--coffee-orange);
-        font-size: 17px;
-        font-weight: 600;
+        margin-top: 16px;
+        margin-bottom: 8px;
+        color: var(--tg-theme-text-color, #6b4f3f);
+        font-size: 16px;
     }
 
     .results p {
-        margin: 10px 0;
-        line-height: 1.7;
+        margin: 8px 0;
+        line-height: 1.5;
         font-size: 15px;
-        color: var(--coffee-brown);
     }
 
     .results strong {
-        color: var(--coffee-orange);
-        font-weight: 700;
-    }
-
-    .results em {
-        color: var(--coffee-dark-teal);
-        font-style: italic;
-        display: block;
-        margin-bottom: 12px;
+        color: var(--tg-theme-link-color, #6b4f3f);
     }
 
     .hidden {
@@ -187,63 +137,22 @@
 
     /* Темная тема */
     body.dark-theme {
-        background: linear-gradient(135deg, var(--coffee-bg-dark) 0%, #0d0c0a 100%);
+        background: #1a1a1a;
     }
 
     body.dark-theme .container {
-        background: #2a2420;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        border-color: rgba(80, 138, 140, 0.3);
-    }
-
-    body.dark-theme h1 {
-        background: linear-gradient(135deg, var(--coffee-cream) 0%, var(--coffee-orange) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    body.dark-theme label {
-        color: var(--coffee-cream);
+        background: #2a2a2a;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     body.dark-theme input,
     body.dark-theme select {
-        background: #1a1614;
-        border-color: var(--coffee-dark-teal);
-        color: var(--coffee-cream);
-    }
-
-    body.dark-theme input:focus,
-    body.dark-theme select:focus {
-        border-color: var(--coffee-teal);
-        box-shadow: 0 0 0 3px rgba(80, 138, 140, 0.2);
+        background: #1a1a1a;
+        border-color: #444;
     }
 
     body.dark-theme .results {
-        background: linear-gradient(135deg, rgba(38, 108, 98, 0.15) 0%, rgba(135, 40, 27, 0.15) 100%);
-        border-color: var(--coffee-dark-teal);
-    }
-
-    body.dark-theme .results h3 {
-        color: var(--coffee-cream);
-        border-bottom-color: var(--coffee-teal);
-    }
-
-    body.dark-theme .results h4 {
-        color: var(--coffee-teal);
-    }
-
-    body.dark-theme .results p {
-        color: #d4c9b8;
-    }
-
-    body.dark-theme .results strong {
-        color: var(--coffee-orange);
-    }
-
-    body.dark-theme .results em {
-        color: var(--coffee-teal);
+        background: #1a1a1a;
     }
 </style>
 
@@ -309,14 +218,6 @@
             <option value="ethiopia">🇪🇹 Эфиопия</option>
             <option value="kenya">🇰🇪 Кения</option>
             <option value="brazil">🇧🇷 Бразилия</option>
-            <option value="guatemala">🇬🇹 Гватемала</option>
-            <option value="costarica">🇨🇷 Коста-Рика</option>
-            <option value="elsalvador">🇸🇻 Эль-Сальвадор</option>
-            <option value="yemen">🇾🇪 Йемен</option>
-            <option value="indonesia">🇮🇩 Индонезия</option>
-            <option value="rwanda">🇷🇼 Руанда / Бурунди</option>
-            <option value="mexico">🇲🇽 Мексика</option>
-            <option value="peru">🇵🇪 Перу</option>
         </select>
     </div>
 
@@ -337,7 +238,6 @@
     <button onclick="calculate()">Рассчитать рецепт</button>
 
     <div class="results" id="results"></div>
-    <button class="share-button hidden" id="shareButton" onclick="shareRecipe()">📤 Поделиться рецептом</button>
 </div>
 
 
@@ -358,46 +258,28 @@
         tg.close();
     });
 
-    // Глобальная переменная для хранения последнего рецепта
-    let lastRecipeText = '';
-
-    // Настройки помола для разных кофемолок (по официальным рекомендациям производителей)
+    // Настройки помола для разных кофемолок
     const grinderSettings = {
         timemore_c3: {
-            v60: 14,        // V60: 12-16 кликов
-            aeropress: 14,  // Aeropress: 10-18 кликов
-            coldbrew: 23    // Cold Brew: 22-24 клика
+            v60: 17,
+            aeropress: 14,
+            coldbrew: Math.round(17 * 1.3) // +30% от V60
         },
         comandante: {
-            v60: 42,        // V60: 35-50 кликов
-            aeropress: 42,  // Aeropress: 30-55 кликов
-            coldbrew: 70    // Cold Brew: 60-80 кликов
+            v60: 41,
+            aeropress: 29,
+            coldbrew: Math.round(41 * 1.3)
         },
         '1zpresso_jx': {
-            v60: 40,        // V60: 1.5-2.5 оборотов (30-50 кликов)
-            aeropress: 45,  // Aeropress: 1.5-3.0 оборотов (30-60 кликов)
-            coldbrew: 70    // Cold Brew: 3.0-4.0 оборотов (60-80 кликов)
+            v60: 73,
+            aeropress: 54,
+            coldbrew: Math.round(73 * 1.3)
         },
         '1zpresso_je': {
-            v60: 50,        // V60: 2.0-3.0 оборотов (40-60 кликов)
-            aeropress: 55,  // Aeropress: 2.0-3.5 оборотов (40-70 кликов)
-            coldbrew: 85    // Cold Brew: 3.5-5.0 оборотов (70-100 кликов)
+            v60: 82,
+            aeropress: 73,
+            coldbrew: Math.round(82 * 1.3)
         }
-    };
-
-    // Характеристики стран
-    const countrySettings = {
-        ethiopia: { tempDelta: 1, grindDelta: 0, name: "Эфиопия" },
-        kenya: { tempDelta: 2, grindDelta: 0, name: "Кения" },
-        brazil: { tempDelta: -1, grindDelta: 1, ratio: 15, name: "Бразилия" },
-        guatemala: { tempDelta: 1, grindDelta: -1, name: "Гватемала" },
-        costarica: { tempDelta: 1, grindDelta: 0, name: "Коста-Рика" },
-        elsalvador: { tempDelta: 0, grindDelta: 1, name: "Эль-Сальвадор" },
-        yemen: { tempDelta: -1, grindDelta: 1, name: "Йемен" },
-        indonesia: { tempDelta: -2, grindDelta: 2, name: "Индонезия" },
-        rwanda: { tempDelta: 1, grindDelta: -1, name: "Руанда/Бурунди" },
-        mexico: { tempDelta: 0, grindDelta: 0, name: "Мексика" },
-        peru: { tempDelta: -1, grindDelta: 1, name: "Перу" }
     };
 
     function toggleMethodFields() {
@@ -447,9 +329,6 @@
         resultsDiv.innerHTML = resultHTML;
         resultsDiv.classList.add('show');
 
-        // Показываем кнопку "Поделиться"
-        document.getElementById('shareButton').classList.remove('hidden');
-
         tg.MainButton.show();
 
         if (tg.HapticFeedback) {
@@ -462,13 +341,15 @@
         let baseTemp = 93;
         let baseGrind = grinderSettings[grinder].v60;
 
-        // Применяем настройки страны
-        const countryData = countrySettings[country];
-        baseTemp += countryData.tempDelta;
-        baseGrind += countryData.grindDelta;
-        if (countryData.ratio) ratio = countryData.ratio;
+        if (country === "ethiopia") {
+            baseTemp += 1;
+        } else if (country === "kenya") {
+            baseTemp += 2;
+        } else if (country === "brazil") {
+            baseTemp -= 1;
+            ratio = 15;
+        }
 
-        // Корректировка по обработке
         if (process === "natural") {
             baseTemp -= 1;
             baseGrind += 1;
@@ -476,7 +357,6 @@
             baseTemp -= 0.5;
         }
 
-        // Корректировка по свежести
         if (days <= 5) {
             baseGrind += 1;
             baseTemp += 1;
@@ -485,80 +365,27 @@
             baseTemp -= 1;
         }
 
-        let coffeeWeight = Math.round(volume / ratio);
+        let coffeeWeight = Math.round(volume / ratio * 10) / 10;
+        let bloom = coffeeWeight * 2;
+        let firstPour = volume * 0.40;
+        let secondPour = volume * 0.70;
+        let finalPour = volume;
+
         let grinderName = getGrinderName(grinder);
-
-        // Динамические проливы в зависимости от объема
-        let bloom = Math.round(coffeeWeight * 2);
-        let steps = [];
-        let pours = [];
-        
-        steps.push(`<strong>0:00-0:30</strong> - Блюминг: <strong>${bloom} мл</strong>`);
-
-        // Определяем количество проливов по объему
-        if (volume <= 250) {
-            // 3 пролива
-            pours = [
-                { pct: 40, t: 45 },
-                { pct: 70, t: 90 },
-                { pct: 100, t: 130 }
-            ];
-        } else if (volume <= 450) {
-            // 4 пролива
-            pours = [
-                { pct: 30, t: 40 },
-                { pct: 50, t: 75 },
-                { pct: 75, t: 110 },
-                { pct: 100, t: 150 }
-            ];
-        } else {
-            // 5 проливов
-            pours = [
-                { pct: 25, t: 35 },
-                { pct: 40, t: 65 },
-                { pct: 60, t: 95 },
-                { pct: 80, t: 130 },
-                { pct: 100, t: 170 }
-            ];
-        }
-
-        let waterSoFar = bloom;
-        pours.forEach((p, i) => {
-          const targetMl = Math.round(volume * (p.pct / 100));
-          const pourMl = targetMl - waterSoFar;
-          const minutes = Math.floor(p.t / 60);
-          const seconds = p.t % 60;
-          const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-          
-          steps.push(`<strong>~${timeStr}</strong> - Пролив ${i+1}: <strong>+${pourMl} мл</strong> → всего <strong>${targetMl} мл</strong>`);
-          waterSoFar = targetMl;
-        });
-
-        const finishTime = pours[pours.length - 1].t + 30;
-        const finishMin = Math.floor(finishTime / 60);
-        const finishSec = finishTime % 60;
-        steps.push(`<strong>~${finishMin}:${finishSec.toString().padStart(2, '0')}</strong> - Окончание экстракции`);
-
-        // Сохраняем текстовую версию рецепта
-        lastRecipeText = `☕ Рецепт V60\n\n` +
-            `Кофе: ${coffeeWeight} г\n` +
-            `Страна: ${countryData.name}\n` +
-            `Обработка: ${getProcessName(process)}\n` +
-            `Температура: ${baseTemp.toFixed(1)}°C\n` +
-            `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-            `Объем: ${volume} мл\n\n` +
-            `Проливы:\n` +
-            steps.map((s, i) => `${i+1}. ${s.replace(/<[^>]*>/g, '')}`).join('\n');
 
         return `
             <h3>📊 Результат для V60</h3>
             <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
             <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
             <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <p>⏱️ Общее время: <strong>~3:00-3:30</strong></p>
             <br>
             <h4>💧 Этапы заливки с таймингом:</h4>
-            ${steps.map((step, i) => `<p>${i+1}️⃣ ${step}</p>`).join('')}
+            <p>1️⃣ <strong>0:00</strong> - Блюминг: <strong>${Math.round(bloom)} мл</strong>, подождать до 0:30</p>
+            <p>2️⃣ <strong>0:30</strong> - Первый залив до <strong>${Math.round(firstPour)} мл</strong> (закончить к ~1:15)</p>
+            <p>3️⃣ <strong>1:15</strong> - Второй залив до <strong>${Math.round(secondPour)} мл</strong> (закончить к ~2:00)</p>
+            <p>4️⃣ <strong>2:00</strong> - Финальный залив до <strong>${Math.round(finalPour)} мл</strong> (закончить к ~2:30)</p>
+            <p>5️⃣ <strong>~3:00-3:30</strong> - Вся вода должна пройти</p>
         `;
     }
 
@@ -566,9 +393,13 @@
         let baseTemp = 88;
         let baseGrind = grinderSettings[grinder].aeropress;
 
-        const countryData = countrySettings[country];
-        baseTemp += countryData.tempDelta;
-        baseGrind += countryData.grindDelta;
+        if (country === "ethiopia") {
+            baseTemp += 1;
+        } else if (country === "kenya") {
+            baseTemp += 2;
+        } else if (country === "brazil") {
+            baseTemp -= 1;
+        }
 
         if (process === "natural") {
             baseTemp -= 1;
@@ -595,22 +426,10 @@
             let concentrate = Math.round(coffeeWeight * 4.2);
             let dilution = volume - concentrate;
 
-            lastRecipeText = `☕ Рецепт Aeropress (концентрат)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Температура: ${baseTemp.toFixed(1)}°C\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Блюминг: ${Math.round(bloom)} мл (30 сек)\n` +
-                `Долив: ${Math.round(secondPour)} мл\n` +
-                `Концентрат: ~${concentrate} мл\n` +
-                `Разбавить: +${Math.round(dilution)} мл`;
-
             return `
                 <h3>📊 Результат для Aeropress</h3>
                 <p><em>Стиль: Концентрат + разбавление</em></p>
                 <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
                 <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
                 <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
                 <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
@@ -629,20 +448,10 @@
             let bloom = coffeeWeight * 2.8;
             let totalWater = volume;
 
-            lastRecipeText = `☕ Рецепт Aeropress (прямое заваривание)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Температура: ${baseTemp.toFixed(1)}°C\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Блюминг: ${Math.round(bloom)} мл (30 сек)\n` +
-                `Общий объем: ${totalWater} мл`;
-
             return `
                 <h3>📊 Результат для Aeropress</h3>
                 <p><em>Стиль: Прямое заваривание</em></p>
                 <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
                 <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
                 <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
                 <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
@@ -660,35 +469,24 @@
     function calculateColdBrew(grinder, volume, country, process, days, style, brewTime) {
         let baseGrind = grinderSettings[grinder].coldbrew;
         let grinderName = getGrinderName(grinder);
-        const countryData = countrySettings[country];
 
-        baseGrind += countryData.grindDelta;
-
+        // Корректировка помола по обработке (для колдбрю меньше влияет)
         if (process === "natural") {
             baseGrind += 1;
         }
 
         if (style === 'classic') {
-            let ratio = 8;
+            // Классический концентрат
+            let ratio = 8; // 1:8 для концентрата
             let coffeeWeight = Math.round(volume / ratio * 10) / 10;
             let waterAmount = volume;
             let concentrate = volume;
-            let suggestedDilution = Math.round(volume * 0.5);
-
-            lastRecipeText = `☕ Рецепт Cold Brew (классический)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Вода: ${Math.round(waterAmount)} мл\n` +
-                `Время: ${brewTime} часов\n` +
-                `Разбавить 1:1 (~${suggestedDilution} мл)`;
+            let suggestedDilution = Math.round(volume * 0.5); // рекомендуемое разбавление 1:1
 
             return `
                 <h3>📊 Результат для Cold Brew</h3>
                 <p><em>Стиль: Классический концентрат</em></p>
                 <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
                 <p>🌡️ Вода: <strong>Комнатная температура (20-25°C)</strong></p>
                 <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
                 <p>⏰ Время заваривания: <strong>${brewTime} часов</strong></p>
@@ -705,31 +503,27 @@
                 <p>📦 Хранить концентрат в холодильнике до 2 недель</p>
             `;
         } else {
-            let ratio = 15;
+            // Флэш брю (японский метод)
+            let ratio = 15; // как для обычного заваривания
             let totalVolume = volume;
-            let iceWeight = Math.round(volume * 0.4);
-            let hotWater = volume - iceWeight;
+            let iceWeight = Math.round(volume * 0.4); // 40% - лёд
+            let hotWater = volume - iceWeight; // 60% - горячая вода
             let coffeeWeight = Math.round(hotWater / ratio * 10) / 10;
             
-            let baseTemp = 95;
-            baseTemp += countryData.tempDelta;
+            // Температура для флэш брю
+            let baseTemp = 95; // выше чем обычно
+            if (country === "ethiopia") {
+                baseTemp += 1;
+            } else if (country === "kenya") {
+                baseTemp += 1;
+            }
 
             let bloom = coffeeWeight * 2;
-
-            lastRecipeText = `☕ Рецепт Cold Brew (флэш брю)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Температура: ${baseTemp}°C\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Лёд: ${iceWeight} г\n` +
-                `Горячая вода: ${Math.round(hotWater)} мл`;
 
             return `
                 <h3>📊 Результат для Cold Brew</h3>
                 <p><em>Стиль: Флэш брю (японский метод)</em></p>
                 <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
                 <p>🌡️ Температура воды: <strong>${baseTemp}°C</strong></p>
                 <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
                 <p>🧊 Лёд: <strong>${iceWeight} г</strong></p>
@@ -747,25 +541,6 @@
                 <p>🧊 Сразу готов к употреблению</p>
             `;
         }
-    }
-
-    function getGrinderName(grinder) {
-        const names = {
-            'timemore_c3': 'Timemore C3',
-            'comandante': 'Comandante',
-            '1zpresso_jx': '1Zpresso JX',
-            '1zpresso_je': '1Zpresso JE'
-        };
-        return names[grinder] || grinder;
-    }
-
-    function getProcessName(process) {
-        const names = {
-            'washed': 'Мытая',
-            'natural': 'Натуральная',
-            'honey': 'Хани'
-        };
-        return names[process] || process;
     }
 
     function shareRecipe() {
@@ -841,6 +616,16 @@
         }
         
         document.body.removeChild(textArea);
+    }
+
+    function getGrinderName(grinder) {
+        const names = {
+            'timemore_c3': 'Timemore C3',
+            'comandante': 'Comandante',
+            '1zpresso_jx': '1Zpresso JX',
+            '1zpresso_je': '1Zpresso JE'
+        };
+        return names[grinder] || grinder;
     }
 
     window.onload = function() {
