@@ -688,20 +688,73 @@
         }
 
         if (lastRecipeText) {
-            // Отправляем рецепт как текстовое сообщение в чат
-            const shareText = lastRecipeText + '\n\n🤖 Создано с помощью Coffee Calculator';
+            // Формируем текст для шаринга
+            const shareText = lastRecipeText + '\n\n🤖 Создано с помощью Coffee Calculator Bot';
             
-            // Используем Telegram API для отправки сообщения
-            tg.sendData(JSON.stringify({
-                action: 'share_recipe',
-                recipe: shareText
-            }));
-
-            // Альтернативный вариант - открыть диалог отправки
-            const encodedText = encodeURIComponent(shareText);
-            const shareUrl = `https://t.me/share/url?url=&text=${encodedText}`;
-            tg.openLink(shareUrl);
+            // Проверяем доступность switchInlineQuery (для ботов)
+            if (tg.initDataUnsafe && tg.initDataUnsafe.query_id) {
+                // Если есть query_id, можно отправить данные боту
+                tg.sendData(JSON.stringify({
+                    action: 'share_recipe',
+                    recipe: shareText
+                }));
+            } else {
+                // Используем showPopup для отображения рецепта с возможностью копирования
+                tg.showPopup({
+                    title: '📋 Рецепт готов!',
+                    message: 'Рецепт скопирован в буфер обмена. Теперь вы можете вставить его в любой чат Telegram.',
+                    buttons: [
+                        {id: 'copy', type: 'default', text: 'Скопировать еще раз'},
+                        {id: 'close', type: 'close', text: 'Закрыть'}
+                    ]
+                }, function(buttonId) {
+                    if (buttonId === 'copy') {
+                        copyToClipboard(shareText);
+                    }
+                });
+                
+                // Копируем в буфер обмена
+                copyToClipboard(shareText);
+            }
         }
+    }
+
+    function copyToClipboard(text) {
+        // Для Telegram Mini App используем современный API
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function() {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            }).catch(function(err) {
+                // Fallback метод
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        // Старый метод для совместимости
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        } catch (err) {
+            console.error('Не удалось скопировать:', err);
+        }
+        
+        document.body.removeChild(textArea);
     }
 
     window.onload = function() {
