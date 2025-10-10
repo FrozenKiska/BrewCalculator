@@ -7,6 +7,7 @@
     <title>Калькулятор кофе</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* ==================== CSS ПЕРЕМЕННЫЕ ==================== */
         :root {
             --coffee-teal: #508A8C;
             --coffee-dark-teal: #266C62;
@@ -17,7 +18,8 @@
             --coffee-bg-dark: #1a1614;
         }
 
-```
+
+    /* ==================== БАЗОВЫЕ СТИЛИ ==================== */
     * {
         margin: 0;
         padding: 0;
@@ -44,6 +46,7 @@
         border: 1px solid rgba(80, 138, 140, 0.1);
     }
 
+    /* ==================== ТИПОГРАФИКА ==================== */
     h1 {
         text-align: center;
         color: var(--coffee-brown);
@@ -56,6 +59,7 @@
         background-clip: text;
     }
 
+    /* ==================== ФОРМЫ ==================== */
     .input-group {
         margin-bottom: 20px;
     }
@@ -85,6 +89,7 @@
         box-shadow: 0 0 0 3px rgba(210, 67, 27, 0.1);
     }
 
+    /* ==================== КНОПКИ ==================== */
     button {
         width: 100%;
         padding: 16px;
@@ -120,6 +125,7 @@
         box-shadow: 0 6px 20px rgba(38, 108, 98, 0.4);
     }
 
+    /* ==================== РЕЗУЛЬТАТЫ ==================== */
     .results {
         margin-top: 24px;
         background: linear-gradient(135deg, rgba(80, 138, 140, 0.05) 0%, rgba(212, 199, 143, 0.05) 100%);
@@ -185,7 +191,7 @@
         display: none;
     }
 
-    /* Темная тема */
+    /* ==================== ТЕМНАЯ ТЕМА ==================== */
     body.dark-theme {
         background: linear-gradient(135deg, var(--coffee-bg-dark) 0%, #0d0c0a 100%);
     }
@@ -246,14 +252,15 @@
         color: var(--coffee-teal);
     }
 </style>
-```
+
 
 </head>
 <body>
     <div class="container">
         <h1>☕ Калькулятор кофе</h1>
 
-```
+
+    <!-- Выбор метода заваривания -->
     <div class="input-group">
         <label for="method">Метод заваривания:</label>
         <select id="method" onchange="toggleMethodFields()">
@@ -263,6 +270,7 @@
         </select>
     </div>
 
+    <!-- Стиль аэропресса (показывается только для Aeropress) -->
     <div class="input-group" id="aeropress-style-group" style="display:none;">
         <label for="aeropressStyle">Стиль аэропресса:</label>
         <select id="aeropressStyle">
@@ -271,6 +279,7 @@
         </select>
     </div>
 
+    <!-- Стиль колдбрю (показывается только для Cold Brew) -->
     <div class="input-group" id="coldbrew-style-group" style="display:none;">
         <label for="coldbrewStyle">Стиль колдбрю:</label>
         <select id="coldbrewStyle">
@@ -279,6 +288,7 @@
         </select>
     </div>
 
+    <!-- Время заваривания колдбрю -->
     <div class="input-group" id="coldbrew-time-group" style="display:none;">
         <label for="coldbrewTime">Время заваривания:</label>
         <select id="coldbrewTime">
@@ -288,6 +298,7 @@
         </select>
     </div>
 
+    <!-- Выбор кофемолки -->
     <div class="input-group">
         <label for="grinder">Кофемолка:</label>
         <select id="grinder">
@@ -298,11 +309,13 @@
         </select>
     </div>
     
+    <!-- Объем напитка -->
     <div class="input-group">
         <label for="volume">Желаемый объем напитка (мл):</label>
         <input type="number" id="volume" value="300" min="100" max="1000" step="10">
     </div>
     
+    <!-- Страна происхождения -->
     <div class="input-group">
         <label for="country">Страна происхождения:</label>
         <select id="country">
@@ -320,6 +333,7 @@
         </select>
     </div>
 
+    <!-- Метод обработки -->
     <div class="input-group">
         <label for="process">Метод обработки:</label>
         <select id="process">
@@ -329,40 +343,58 @@
         </select>
     </div>
 
+    <!-- Свежесть зерна -->
     <div class="input-group">
         <label for="days">Дней после обжарки:</label>
         <input type="number" id="days" value="7" min="0" max="30">
     </div>
 
+    <!-- Кнопка расчета -->
     <button onclick="calculate()">Рассчитать рецепт</button>
 
+    <!-- Блок результатов -->
     <div class="results" id="results"></div>
+    
+    <!-- Кнопка шаринга -->
     <button class="share-button hidden" id="shareButton" onclick="shareRecipe()">📤 Поделиться рецептом</button>
 </div>
-```
+
 
 <script>
-    // Инициализация Telegram Web App
-    let tg = window.Telegram.WebApp;
+    // ==================== ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP ====================
+    const tg = window.Telegram.WebApp;
     
+    // Разворачиваем приложение на весь экран
     tg.expand();
+    
+    // Включаем подтверждение при закрытии
     tg.enableClosingConfirmation();
     
+    // Применяем темную тему если нужно
     if (tg.colorScheme === 'dark') {
         document.body.classList.add('dark-theme');
     }
 
+    // Настраиваем главную кнопку
     tg.MainButton.setText('Закрыть');
     tg.MainButton.hide();
-    tg.MainButton.onClick(function() {
-        tg.close();
+    tg.MainButton.onClick(() => tg.close());
+
+    // Обработка изменения темы
+    tg.onEvent('themeChanged', () => {
+        document.body.classList.toggle('dark-theme', tg.colorScheme === 'dark');
     });
 
-    // Глобальная переменная для хранения последнего рецепта
-    let lastRecipeText = '';
+    // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+    let lastRecipeText = ''; // Хранит текст последнего рецепта для шаринга
 
-    // Настройки помола для разных кофемолок (по официальным рекомендациям производителей)
-    const grinderSettings = {
+    // ==================== КОНФИГУРАЦИЯ ====================
+    
+    /**
+     * Настройки помола для разных кофемолок
+     * Значения основаны на официальных рекомендациях производителей
+     */
+    const GRINDER_SETTINGS = {
         timemore_c3: {
             v60: 14,        // V60: 12-16 кликов
             aeropress: 14,  // Aeropress: 10-18 кликов
@@ -385,8 +417,13 @@
         }
     };
 
-    // Характеристики стран
-    const countrySettings = {
+    /**
+     * Характеристики стран происхождения кофе
+     * tempDelta: корректировка температуры (+/- градусы)
+     * grindDelta: корректировка помола (+/- клики)
+     * ratio: специальное соотношение кофе/вода (опционально)
+     */
+    const COUNTRY_SETTINGS = {
         ethiopia: { tempDelta: 1, grindDelta: 0, name: "Эфиопия" },
         kenya: { tempDelta: 2, grindDelta: 0, name: "Кения" },
         brazil: { tempDelta: -1, grindDelta: 1, ratio: 15, name: "Бразилия" },
@@ -400,16 +437,42 @@
         peru: { tempDelta: -1, grindDelta: 1, name: "Перу" }
     };
 
+    /**
+     * Названия методов обработки для отображения
+     */
+    const PROCESS_NAMES = {
+        washed: 'Мытая',
+        natural: 'Натуральная',
+        honey: 'Хани'
+    };
+
+    /**
+     * Названия кофемолок для отображения
+     */
+    const GRINDER_NAMES = {
+        timemore_c3: 'Timemore C3',
+        comandante: 'Comandante',
+        '1zpresso_jx': '1Zpresso JX',
+        '1zpresso_je': '1Zpresso JE'
+    };
+
+    // ==================== UI ФУНКЦИИ ====================
+    
+    /**
+     * Переключает видимость полей в зависимости от выбранного метода
+     */
     function toggleMethodFields() {
         const method = document.getElementById('method').value;
         const aeropressStyleGroup = document.getElementById('aeropress-style-group');
         const coldbrewStyleGroup = document.getElementById('coldbrew-style-group');
         const coldbrewTimeGroup = document.getElementById('coldbrew-time-group');
         
+        // Скрываем все специфичные поля
         aeropressStyleGroup.style.display = 'none';
         coldbrewStyleGroup.style.display = 'none';
         coldbrewTimeGroup.style.display = 'none';
         
+        // Показываем нужные поля
         if (method === 'aeropress') {
             aeropressStyleGroup.style.display = 'block';
         } else if (method === 'coldbrew') {
@@ -418,57 +481,77 @@
         }
     }
 
+    /**
+     * Главная функция расчета рецепта
+     */
     function calculate() {
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('light');
-        }
+        // Haptic feedback при нажатии
+        triggerHaptic('light');
 
-        let method = document.getElementById('method').value;
-        let aeropressStyle = document.getElementById('aeropressStyle').value;
-        let coldbrewStyle = document.getElementById('coldbrewStyle').value;
-        let coldbrewTime = document.getElementById('coldbrewTime').value;
-        let grinder = document.getElementById('grinder').value;
-        let volume = parseFloat(document.getElementById('volume').value);
-        let country = document.getElementById('country').value;
-        let process = document.getElementById('process').value;
-        let days = parseInt(document.getElementById('days').value);
+        // Собираем все параметры из формы
+        const params = {
+            method: document.getElementById('method').value,
+            aeropressStyle: document.getElementById('aeropressStyle').value,
+            coldbrewStyle: document.getElementById('coldbrewStyle').value,
+            coldbrewTime: document.getElementById('coldbrewTime').value,
+            grinder: document.getElementById('grinder').value,
+            volume: parseFloat(document.getElementById('volume').value),
+            country: document.getElementById('country').value,
+            process: document.getElementById('process').value,
+            days: parseInt(document.getElementById('days').value)
+        };
 
+        // Рассчитываем рецепт в зависимости от метода
         let resultHTML = '';
-
-        if (method === 'v60') {
-            resultHTML = calculateV60(grinder, volume, country, process, days);
-        } else if (method === 'aeropress') {
-            resultHTML = calculateAeropress(grinder, volume, country, process, days, aeropressStyle);
-        } else if (method === 'coldbrew') {
-            resultHTML = calculateColdBrew(grinder, volume, country, process, days, coldbrewStyle, coldbrewTime);
+        switch (params.method) {
+            case 'v60':
+                resultHTML = calculateV60(params);
+                break;
+            case 'aeropress':
+                resultHTML = calculateAeropress(params);
+                break;
+            case 'coldbrew':
+                resultHTML = calculateColdBrew(params);
+                break;
         }
 
-        let resultsDiv = document.getElementById('results');
+        // Отображаем результаты
+        const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = resultHTML;
         resultsDiv.classList.add('show');
 
         // Показываем кнопку "Поделиться"
         document.getElementById('shareButton').classList.remove('hidden');
 
+        // Показываем главную кнопку Telegram
         tg.MainButton.show();
 
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred('success');
-        }
+        // Haptic feedback при успешном расчете
+        triggerHaptic('success');
     }
 
-    function calculateV60(grinder, volume, country, process, days) {
-        let ratio = 16;
-        let baseTemp = 93;
-        let baseGrind = grinderSettings[grinder].v60;
+    // ==================== РАСЧЕТ V60 ====================
+    
+    /**
+     * Расчет рецепта для V60 (пуровер)
+     * @param {Object} params - Параметры заваривания
+     * @returns {string} HTML с результатом
+     */
+    function calculateV60(params) {
+        const { grinder, volume, country, process, days } = params;
+        
+        // Базовые значения
+        let ratio = 16; // Соотношение вода:кофе
+        let baseTemp = 93; // Базовая температура
+        let baseGrind = GRINDER_SETTINGS[grinder].v60;
 
-        // Применяем настройки страны
-        const countryData = countrySettings[country];
+        // Применяем корректировки по стране
+        const countryData = COUNTRY_SETTINGS[country];
         baseTemp += countryData.tempDelta;
         baseGrind += countryData.grindDelta;
         if (countryData.ratio) ratio = countryData.ratio;
 
-        // Корректировка по обработке
+        // Корректировка по методу обработки
         if (process === "natural") {
             baseTemp -= 1;
             baseGrind += 1;
@@ -476,7 +559,7 @@
             baseTemp -= 0.5;
         }
 
-        // Корректировка по свежести
+        // Корректировка по свежести зерна
         if (days <= 5) {
             baseGrind += 1;
             baseTemp += 1;
@@ -485,35 +568,70 @@
             baseTemp -= 1;
         }
 
-        let coffeeWeight = Math.round(volume / ratio);
-        let grinderName = getGrinderName(grinder);
-
-        // Динамические проливы в зависимости от объема
-        let bloom = Math.round(coffeeWeight * 2);
-        let steps = [];
-        let pours = [];
+        // Расчет веса кофе и проливов
+        const coffeeWeight = Math.round(volume / ratio);
+        const bloom = Math.round(coffeeWeight * 2);
         
-        steps.push(`<strong>0:00-0:30</strong> - Блюминг: <strong>${bloom} мл</strong>`);
-
         // Определяем количество проливов по объему
+        const pours = getPourSchedule(volume);
+        
+        // Генерируем шаги проливов
+        const steps = generatePourSteps(volume, bloom, pours);
+        
+        // Время окончания
+        const finishTime = pours[pours.length - 1].t + 30;
+        const finishTimeStr = formatTime(finishTime);
+
+        // Сохраняем текстовую версию для шаринга
+        lastRecipeText = buildRecipeText('V60', {
+            coffee: coffeeWeight,
+            country: countryData.name,
+            process: PROCESS_NAMES[process],
+            temp: baseTemp,
+            grind: Math.round(baseGrind),
+            grinder: GRINDER_NAMES[grinder],
+            volume,
+            steps
+        });
+
+        // Возвращаем HTML
+        return `
+            <h3>📊 Результат для V60</h3>
+            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
+            <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
+            <p>⚙️ Помол (${GRINDER_NAMES[grinder]}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <br>
+            <h4>💧 Этапы заливки с таймингом:</h4>
+            ${steps.map((step, i) => `<p>${i + 1}️⃣ ${step}</p>`).join('')}
+            <p>${steps.length + 1}️⃣ <strong>${finishTimeStr}</strong> - Окончание экстракции</p>
+        `;
+    }
+
+    /**
+     * Определяет расписание проливов в зависимости от объема
+     * @param {number} volume - Объем напитка в мл
+     * @returns {Array} Массив объектов с процентами и временем
+     */
+    function getPourSchedule(volume) {
         if (volume <= 250) {
-            // 3 пролива
-            pours = [
+            // 3 пролива для малого объема
+            return [
                 { pct: 40, t: 45 },
                 { pct: 70, t: 90 },
                 { pct: 100, t: 130 }
             ];
         } else if (volume <= 450) {
-            // 4 пролива
-            pours = [
+            // 4 пролива для среднего объема
+            return [
                 { pct: 30, t: 40 },
                 { pct: 50, t: 75 },
                 { pct: 75, t: 110 },
                 { pct: 100, t: 150 }
             ];
         } else {
-            // 5 проливов
-            pours = [
+            // 5 проливов для большого объема
+            return [
                 { pct: 25, t: 35 },
                 { pct: 40, t: 65 },
                 { pct: 60, t: 95 },
@@ -521,52 +639,48 @@
                 { pct: 100, t: 170 }
             ];
         }
-
-        let waterSoFar = bloom;
-        pours.forEach((p, i) => {
-          const targetMl = Math.round(volume * (p.pct / 100));
-          const pourMl = targetMl - waterSoFar;
-          const minutes = Math.floor(p.t / 60);
-          const seconds = p.t % 60;
-          const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-          
-          steps.push(`<strong>~${timeStr}</strong> - Пролив ${i+1}: <strong>+${pourMl} мл</strong> → всего <strong>${targetMl} мл</strong>`);
-          waterSoFar = targetMl;
-        });
-
-        const finishTime = pours[pours.length - 1].t + 30;
-        const finishMin = Math.floor(finishTime / 60);
-        const finishSec = finishTime % 60;
-        steps.push(`<strong>~${finishMin}:${finishSec.toString().padStart(2, '0')}</strong> - Окончание экстракции`);
-
-        // Сохраняем текстовую версию рецепта
-        lastRecipeText = `☕ Рецепт V60\n\n` +
-            `Кофе: ${coffeeWeight} г\n` +
-            `Страна: ${countryData.name}\n` +
-            `Обработка: ${getProcessName(process)}\n` +
-            `Температура: ${baseTemp.toFixed(1)}°C\n` +
-            `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-            `Объем: ${volume} мл\n\n` +
-            `Проливы:\n` +
-            steps.map((s, i) => `${i+1}. ${s.replace(/<[^>]*>/g, '')}`).join('\n');
-
-        return `
-            <h3>📊 Результат для V60</h3>
-            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
-            <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
-            <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-            <br>
-            <h4>💧 Этапы заливки с таймингом:</h4>
-            ${steps.map((step, i) => `<p>${i+1}️⃣ ${step}</p>`).join('')}
-        `;
     }
 
-    function calculateAeropress(grinder, volume, country, process, days, style) {
-        let baseTemp = 88;
-        let baseGrind = grinderSettings[grinder].aeropress;
+    /**
+     * Генерирует шаги проливов с таймингом
+     * @param {number} volume - Общий объем
+     * @param {number} bloom - Объем блюминга
+     * @param {Array} pours - Расписание проливов
+     * @returns {Array} Массив строк с описанием шагов
+     */
+    function generatePourSteps(volume, bloom, pours) {
+        const steps = [];
+        steps.push(`<strong>0:00-0:30</strong> - Блюминг: <strong>${bloom} мл</strong>`);
 
-        const countryData = countrySettings[country];
+        let waterSoFar = bloom;
+        pours.forEach((pour, i) => {
+            const targetMl = Math.round(volume * (pour.pct / 100));
+            const pourMl = targetMl - waterSoFar;
+            const timeStr = formatTime(pour.t);
+            
+            steps.push(`<strong>~${timeStr}</strong> - Пролив ${i + 1}: <strong>+${pourMl} мл</strong> → всего <strong>${targetMl} мл</strong>`);
+            waterSoFar = targetMl;
+        });
+
+        return steps;
+    }
+
+    // ==================== РАСЧЕТ AEROPRESS ====================
+    
+    /**
+     * Расчет рецепта для Aeropress
+     * @param {Object} params - Параметры заваривания
+     * @returns {string} HTML с результатом
+     */
+    function calculateAeropress(params) {
+        const { grinder, volume, country, process, days, aeropressStyle } = params;
+        
+        // Базовые значения
+        let baseTemp = 88;
+        let baseGrind = GRINDER_SETTINGS[grinder].aeropress;
+
+        // Применяем корректировки
+        const countryData = COUNTRY_SETTINGS[country];
         baseTemp += countryData.tempDelta;
         baseGrind += countryData.grindDelta;
 
@@ -585,225 +699,317 @@
             baseTemp -= 1;
         }
 
-        let grinderName = getGrinderName(grinder);
-
-        if (style === 'concentrate') {
-            let coffeeWeight = 18;
-            let brewWater = Math.round(coffeeWeight * 11);
-            let bloom = coffeeWeight * 2.8;
-            let secondPour = brewWater;
-            let concentrate = Math.round(coffeeWeight * 4.2);
-            let dilution = volume - concentrate;
-
-            lastRecipeText = `☕ Рецепт Aeropress (концентрат)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Температура: ${baseTemp.toFixed(1)}°C\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Блюминг: ${Math.round(bloom)} мл (30 сек)\n` +
-                `Долив: ${Math.round(secondPour)} мл\n` +
-                `Концентрат: ~${concentrate} мл\n` +
-                `Разбавить: +${Math.round(dilution)} мл`;
-
-            return `
-                <h3>📊 Результат для Aeropress</h3>
-                <p><em>Стиль: Концентрат + разбавление</em></p>
-                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
-                <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
-                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-                <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
-                <br>
-                <h4>💧 Этапы приготовления:</h4>
-                <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
-                <p>2️⃣ Долив до: <strong>${Math.round(secondPour)} мл</strong></p>
-                <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
-                <p>4️⃣ Переворот и прессование: <strong>30 сек</strong></p>
-                <p>5️⃣ Получится концентрат: <strong>~${concentrate} мл</strong></p>
-                <p>6️⃣ Разбавить водой: <strong>+${Math.round(dilution)} мл</strong> до ${volume} мл</p>
-            `;
+        // Рассчитываем в зависимости от стиля
+        if (aeropressStyle === 'concentrate') {
+            return calculateAeropressConcentrate(volume, baseTemp, baseGrind, countryData, process, grinder);
         } else {
-            let ratio = 15;
-            let coffeeWeight = Math.round(volume / ratio * 10) / 10;
-            let bloom = coffeeWeight * 2.8;
-            let totalWater = volume;
-
-            lastRecipeText = `☕ Рецепт Aeropress (прямое заваривание)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Температура: ${baseTemp.toFixed(1)}°C\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Блюминг: ${Math.round(bloom)} мл (30 сек)\n` +
-                `Общий объем: ${totalWater} мл`;
-
-            return `
-                <h3>📊 Результат для Aeropress</h3>
-                <p><em>Стиль: Прямое заваривание</em></p>
-                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
-                <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
-                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-                <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
-                <br>
-                <h4>💧 Этапы приготовления:</h4>
-                <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
-                <p>2️⃣ Долив до: <strong>${Math.round(totalWater)} мл</strong></p>
-                <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
-                <p>4️⃣ Переворот и прессование: <strong>30-40 сек</strong></p>
-                <p>5️⃣ Готовый напиток: <strong>${volume} мл</strong></p>
-            `;
+            return calculateAeropressDirect(volume, baseTemp, baseGrind, countryData, process, grinder);
         }
     }
 
-    function calculateColdBrew(grinder, volume, country, process, days, style, brewTime) {
-        let baseGrind = grinderSettings[grinder].coldbrew;
-        let grinderName = getGrinderName(grinder);
-        const countryData = countrySettings[country];
+    /**
+     * Aeropress: стиль "концентрат + разбавление"
+     */
+    function calculateAeropressConcentrate(volume, baseTemp, baseGrind, countryData, process, grinder) {
+        const coffeeWeight = 18;
+        const brewWater = Math.round(coffeeWeight * 11);
+        const bloom = Math.round(coffeeWeight * 2.8);
+        const concentrate = Math.round(coffeeWeight * 4.2);
+        const dilution = volume - concentrate;
+
+        lastRecipeText = `☕ Рецепт Aeropress (концентрат)\n\n` +
+            `Кофе: ${coffeeWeight} г\n` +
+            `Страна: ${countryData.name}\n` +
+            `Обработка: ${PROCESS_NAMES[process]}\n` +
+            `Температура: ${baseTemp.toFixed(1)}°C\n` +
+            `Помол (${GRINDER_NAMES[grinder]}): ${Math.round(baseGrind)} кликов\n` +
+            `Блюминг: ${Math.round(bloom)} мл (30 сек)\n` +
+            `Долив: ${Math.round(brewWater)} мл\n` +
+            `Концентрат: ~${concentrate} мл\n` +
+            `Разбавить: +${Math.round(dilution)} мл`;
+
+        return `
+            <h3>📊 Результат для Aeropress</h3>
+            <p><em>Стиль: Концентрат + разбавление</em></p>
+            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
+            <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
+            <p>⚙️ Помол (${GRINDER_NAMES[grinder]}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
+            <br>
+            <h4>💧 Этапы приготовления:</h4>
+            <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+            <p>2️⃣ Долив до: <strong>${Math.round(brewWater)} мл</strong></p>
+            <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
+            <p>4️⃣ Переворот и прессование: <strong>30 сек</strong></p>
+            <p>5️⃣ Получится концентрат: <strong>~${concentrate} мл</strong></p>
+            <p>6️⃣ Разбавить водой: <strong>+${Math.round(dilution)} мл</strong> до ${volume} мл</p>
+        `;
+    }
+
+    /**
+     * Aeropress: стиль "прямое заваривание"
+     */
+    function calculateAeropressDirect(volume, baseTemp, baseGrind, countryData, process, grinder) {
+        const ratio = 15;
+        const coffeeWeight = Math.round(volume / ratio * 10) / 10;
+        const bloom = Math.round(coffeeWeight * 2.8);
+
+        lastRecipeText = `☕ Рецепт Aeropress (прямое заваривание)\n\n` +
+            `Кофе: ${coffeeWeight} г\n` +
+            `Страна: ${countryData.name}\n` +
+            `Обработка: ${PROCESS_NAMES[process]}\n` +
+            `Температура: ${baseTemp.toFixed(1)}°C\n` +
+            `Помол (${GRINDER_NAMES[grinder]}): ${Math.round(baseGrind)} кликов\n` +
+            `Блюминг: ${Math.round(bloom)} мл (30 сек)\n` +
+            `Общий объем: ${volume} мл`;
+
+        return `
+            <h3>📊 Результат для Aeropress</h3>
+            <p><em>Стиль: Прямое заваривание</em></p>
+            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
+            <p>🌡️ Температура воды: <strong>${baseTemp.toFixed(1)}°C</strong></p>
+            <p>⚙️ Помол (${GRINDER_NAMES[grinder]}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <p>🔄 Позиция: <strong>Inverted (перевернутая)</strong></p>
+            <br>
+            <h4>💧 Этапы приготовления:</h4>
+            <p>1️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+            <p>2️⃣ Долив до: <strong>${Math.round(volume)} мл</strong></p>
+            <p>3️⃣ Время экстракции: <strong>1:30</strong> (общее)</p>
+            <p>4️⃣ Переворот и прессование: <strong>30-40 сек</strong></p>
+            <p>5️⃣ Готовый напиток: <strong>${volume} мл</strong></p>
+        `;
+    }
+
+    // ==================== РАСЧЕТ COLD BREW ====================
+    
+    /**
+     * Расчет рецепта для Cold Brew
+     * @param {Object} params - Параметры заваривания
+     * @returns {string} HTML с результатом
+     */
+    function calculateColdBrew(params) {
+        const { grinder, volume, country, process, coldbrewStyle, coldbrewTime } = params;
+        
+        let baseGrind = GRINDER_SETTINGS[grinder].coldbrew;
+        const countryData = COUNTRY_SETTINGS[country];
 
         baseGrind += countryData.grindDelta;
+        if (process === "natural") baseGrind += 1;
 
-        if (process === "natural") {
-            baseGrind += 1;
-        }
-
-        if (style === 'classic') {
-            let ratio = 8;
-            let coffeeWeight = Math.round(volume / ratio * 10) / 10;
-            let waterAmount = volume;
-            let concentrate = volume;
-            let suggestedDilution = Math.round(volume * 0.5);
-
-            lastRecipeText = `☕ Рецепт Cold Brew (классический)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Вода: ${Math.round(waterAmount)} мл\n` +
-                `Время: ${brewTime} часов\n` +
-                `Разбавить 1:1 (~${suggestedDilution} мл)`;
-
-            return `
-                <h3>📊 Результат для Cold Brew</h3>
-                <p><em>Стиль: Классический концентрат</em></p>
-                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
-                <p>🌡️ Вода: <strong>Комнатная температура (20-25°C)</strong></p>
-                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-                <p>⏰ Время заваривания: <strong>${brewTime} часов</strong></p>
-                <br>
-                <h4>💧 Приготовление:</h4>
-                <p>1️⃣ Смешать кофе с <strong>${Math.round(waterAmount)} мл</strong> воды</p>
-                <p>2️⃣ Поставить в холодильник на <strong>${brewTime} часов</strong></p>
-                <p>3️⃣ Отфильтровать через бумажный фильтр</p>
-                <p>4️⃣ Получится концентрат: <strong>~${Math.round(concentrate * 0.85)} мл</strong></p>
-                <br>
-                <h4>🥤 Подача:</h4>
-                <p>💡 Разбавить водой/молоком <strong>1:1</strong> (добавить ~${suggestedDilution} мл)</p>
-                <p>🧊 Добавить лёд по вкусу</p>
-                <p>📦 Хранить концентрат в холодильнике до 2 недель</p>
-            `;
+        if (coldbrewStyle === 'classic') {
+            return calculateColdBrewClassic(volume, baseGrind, countryData, process, grinder, coldbrewTime);
         } else {
-            let ratio = 15;
-            let totalVolume = volume;
-            let iceWeight = Math.round(volume * 0.4);
-            let hotWater = volume - iceWeight;
-            let coffeeWeight = Math.round(hotWater / ratio * 10) / 10;
-            
-            let baseTemp = 95;
-            baseTemp += countryData.tempDelta;
-
-            let bloom = coffeeWeight * 2;
-
-            lastRecipeText = `☕ Рецепт Cold Brew (флэш брю)\n\n` +
-                `Кофе: ${coffeeWeight} г\n` +
-                `Страна: ${countryData.name}\n` +
-                `Обработка: ${getProcessName(process)}\n` +
-                `Температура: ${baseTemp}°C\n` +
-                `Помол (${grinderName}): ${Math.round(baseGrind)} кликов\n` +
-                `Лёд: ${iceWeight} г\n` +
-                `Горячая вода: ${Math.round(hotWater)} мл`;
-
-            return `
-                <h3>📊 Результат для Cold Brew</h3>
-                <p><em>Стиль: Флэш брю (японский метод)</em></p>
-                <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
-                <p>🌍 Страна: <strong>${countryData.name}</strong></p>
-                <p>🌡️ Температура воды: <strong>${baseTemp}°C</strong></p>
-                <p>⚙️ Помол (${grinderName}): <strong>${Math.round(baseGrind)} кликов</strong></p>
-                <p>🧊 Лёд: <strong>${iceWeight} г</strong></p>
-                <br>
-                <h4>💧 Приготовление:</h4>
-                <p>1️⃣ Положить <strong>${iceWeight} г льда</strong> в сервер</p>
-                <p>2️⃣ Установить дриппер с кофе над сервером</p>
-                <p>3️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
-                <p>4️⃣ Залить остальную воду: <strong>${Math.round(hotWater)} мл</strong> горячей воды</p>
-                <p>5️⃣ Кофе сразу охлаждается, падая на лёд</p>
-                <p>6️⃣ Готовый напиток: <strong>${totalVolume} мл</strong></p>
-                <br>
-                <h4>🥤 Результат:</h4>
-                <p>✨ Яркий, ароматный холодный кофе за 3-4 минуты</p>
-                <p>🧊 Сразу готов к употреблению</p>
-            `;
+            return calculateColdBrewFlash(volume, baseGrind, countryData, process, grinder);
         }
     }
 
+    /**
+     * Cold Brew: классический концентрат
+     */
+    function calculateColdBrewClassic(volume, baseGrind, countryData, process, grinder, brewTime) {
+        const ratio = 8;
+        const coffeeWeight = Math.round(volume / ratio * 10) / 10;
+        const waterAmount = volume;
+        const concentrate = Math.round(volume * 0.85);
+        const suggestedDilution = Math.round(volume * 0.5);
+
+        lastRecipeText = `☕ Рецепт Cold Brew (классический)\n\n` +
+            `Кофе: ${coffeeWeight} г\n` +
+            `Страна: ${countryData.name}\n` +
+            `Обработка: ${PROCESS_NAMES[process]}\n` +
+            `Помол (${GRINDER_NAMES[grinder]}): ${Math.round(baseGrind)} кликов\n` +
+            `Вода: ${Math.round(waterAmount)} мл\n` +
+            `Время: ${brewTime} часов\n` +
+            `Разбавить 1:1 (~${suggestedDilution} мл)`;
+
+        return `
+            <h3>📊 Результат для Cold Brew</h3>
+            <p><em>Стиль: Классический концентрат</em></p>
+            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
+            <p>🌡️ Вода: <strong>Комнатная температура (20-25°C)</strong></p>
+            <p>⚙️ Помол (${GRINDER_NAMES[grinder]}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <p>⏰ Время заваривания: <strong>${brewTime} часов</strong></p>
+            <br>
+            <h4>💧 Приготовление:</h4>
+            <p>1️⃣ Смешать кофе с <strong>${Math.round(waterAmount)} мл</strong> воды</p>
+            <p>2️⃣ Поставить в холодильник на <strong>${brewTime} часов</strong></p>
+            <p>3️⃣ Отфильтровать через бумажный фильтр</p>
+            <p>4️⃣ Получится концентрат: <strong>~${concentrate} мл</strong></p>
+            <br>
+            <h4>🥤 Подача:</h4>
+            <p>💡 Разбавить водой/молоком <strong>1:1</strong> (добавить ~${suggestedDilution} мл)</p>
+            <p>🧊 Добавить лёд по вкусу</p>
+            <p>📦 Хранить концентрат в холодильнике до 2 недель</p>
+        `;
+    }
+
+    /**
+     * Cold Brew: флэш брю (японский метод)
+     */
+    function calculateColdBrewFlash(volume, baseGrind, countryData, process, grinder) {
+        const ratio = 15;
+        const iceWeight = Math.round(volume * 0.4);
+        const hotWater = volume - iceWeight;
+        const coffeeWeight = Math.round(hotWater / ratio * 10) / 10;
+        
+        let baseTemp = 95;
+        baseTemp += countryData.tempDelta;
+
+        const bloom = Math.round(coffeeWeight * 2);
+
+        lastRecipeText = `☕ Рецепт Cold Brew (флэш брю)\n\n` +
+            `Кофе: ${coffeeWeight} г\n` +
+            `Страна: ${countryData.name}\n` +
+            `Обработка: ${PROCESS_NAMES[process]}\n` +
+            `Температура: ${baseTemp}°C\n` +
+            `Помол (${GRINDER_NAMES[grinder]}): ${Math.round(baseGrind)} кликов\n` +
+            `Лёд: ${iceWeight} г\n` +
+            `Горячая вода: ${Math.round(hotWater)} мл`;
+
+        return `
+            <h3>📊 Результат для Cold Brew</h3>
+            <p><em>Стиль: Флэш брю (японский метод)</em></p>
+            <p>☕ Кофе: <strong>${coffeeWeight} г</strong></p>
+            <p>🌍 Страна: <strong>${countryData.name}</strong></p>
+            <p>🌡️ Температура воды: <strong>${baseTemp}°C</strong></p>
+            <p>⚙️ Помол (${GRINDER_NAMES[grinder]}): <strong>${Math.round(baseGrind)} кликов</strong></p>
+            <p>🧊 Лёд: <strong>${iceWeight} г</strong></p>
+            <br>
+            <h4>💧 Приготовление:</h4>
+            <p>1️⃣ Положить <strong>${iceWeight} г льда</strong> в сервер</p>
+            <p>2️⃣ Установить дриппер с кофе над сервером</p>
+            <p>3️⃣ Блюминг: <strong>${Math.round(bloom)} мл</strong> воды (30 сек)</p>
+            <p>4️⃣ Залить остальную воду: <strong>${Math.round(hotWater)} мл</strong> горячей воды</p>
+            <p>5️⃣ Кофе сразу охлаждается, падая на лёд</p>
+            <p>6️⃣ Готовый напиток: <strong>${volume} мл</strong></p>
+            <br>
+            <h4>🥤 Результат:</h4>
+            <p>✨ Яркий, ароматный холодный кофе за 3-4 минуты</p>
+            <p>🧊 Сразу готов к употреблению</p>
+        `;
+    }
+
+    // ==================== УТИЛИТЫ ====================
+    
+    /**
+     * Форматирует время из секунд в формат MM:SS
+     * @param {number} seconds - Время в секундах
+     * @returns {string} Отформатированное время
+     */
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    /**
+     * Создает текстовую версию рецепта для шаринга
+     * @param {string} method - Название метода
+     * @param {Object} data - Данные рецепта
+     * @returns {string} Текстовая версия рецепта
+     */
+    function buildRecipeText(method, data) {
+        let text = `☕ Рецепт ${method}\n\n`;
+        text += `Кофе: ${data.coffee} г\n`;
+        text += `Страна: ${data.country}\n`;
+        text += `Обработка: ${data.process}\n`;
+        text += `Температура: ${data.temp.toFixed(1)}°C\n`;
+        text += `Помол (${data.grinder}): ${data.grind} кликов\n`;
+        text += `Объем: ${data.volume} мл\n\n`;
+        
+        if (data.steps) {
+            text += `Проливы:\n`;
+            text += data.steps.map((s, i) => `${i + 1}. ${s.replace(/<[^>]*>/g, '')}`).join('\n');
+        }
+        
+        return text;
+    }
+
+    /**
+     * Триггерит haptic feedback (вибрацию)
+     * @param {string} type - Тип вибрации: 'light', 'medium', 'heavy', 'success', 'error', 'warning'
+     */
+    function triggerHaptic(type) {
+        if (!tg.HapticFeedback) return;
+        
+        switch (type) {
+            case 'light':
+            case 'medium':
+            case 'heavy':
+            case 'rigid':
+            case 'soft':
+                tg.HapticFeedback.impactOccurred(type);
+                break;
+            case 'success':
+            case 'error':
+            case 'warning':
+                tg.HapticFeedback.notificationOccurred(type);
+                break;
+            case 'selection':
+                tg.HapticFeedback.selectionChanged();
+                break;
+        }
+    }
+
+    // ==================== ШАРИНГ ====================
+    
+    /**
+     * Делится рецептом через Telegram
+     */
     function shareRecipe() {
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('medium');
-        }
+        triggerHaptic('medium');
 
-        if (lastRecipeText) {
-            // Формируем текст для шаринга
-            const shareText = lastRecipeText + '\n\n🤖 Создано с помощью Coffee Calculator Bot';
+        if (!lastRecipeText) return;
+
+        const shareText = lastRecipeText + '\n\n🤖 Создано с помощью Coffee Calculator Bot';
+        
+        // Проверяем доступность query_id для отправки данных боту
+        if (tg.initDataUnsafe && tg.initDataUnsafe.query_id) {
+            tg.sendData(JSON.stringify({
+                action: 'share_recipe',
+                recipe: shareText
+            }));
+        } else {
+            // Показываем popup и копируем в буфер обмена
+            tg.showPopup({
+                title: '📋 Рецепт готов!',
+                message: 'Рецепт скопирован в буфер обмена. Теперь вы можете вставить его в любой чат Telegram.',
+                buttons: [
+                    { id: 'copy', type: 'default', text: 'Скопировать еще раз' },
+                    { id: 'close', type: 'close', text: 'Закрыть' }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 'copy') {
+                    copyToClipboard(shareText);
+                }
+            });
             
-            // Проверяем доступность switchInlineQuery (для ботов)
-            if (tg.initDataUnsafe && tg.initDataUnsafe.query_id) {
-                // Если есть query_id, можно отправить данные боту
-                tg.sendData(JSON.stringify({
-                    action: 'share_recipe',
-                    recipe: shareText
-                }));
-            } else {
-                // Используем showPopup для отображения рецепта с возможностью копирования
-                tg.showPopup({
-                    title: '📋 Рецепт готов!',
-                    message: 'Рецепт скопирован в буфер обмена. Теперь вы можете вставить его в любой чат Telegram.',
-                    buttons: [
-                        {id: 'copy', type: 'default', text: 'Скопировать еще раз'},
-                        {id: 'close', type: 'close', text: 'Закрыть'}
-                    ]
-                }, function(buttonId) {
-                    if (buttonId === 'copy') {
-                        copyToClipboard(shareText);
-                    }
-                });
-                
-                // Копируем в буфер обмена
-                copyToClipboard(shareText);
-            }
+            copyToClipboard(shareText);
         }
     }
 
+    /**
+     * Копирует текст в буфер обмена
+     * @param {string} text - Текст для копирования
+     */
     function copyToClipboard(text) {
-        // Для Telegram Mini App используем современный API
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(function() {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-            }).catch(function(err) {
-                // Fallback метод
-                fallbackCopy(text);
-            });
+            navigator.clipboard.writeText(text)
+                .then(() => triggerHaptic('success'))
+                .catch(() => fallbackCopy(text));
         } else {
             fallbackCopy(text);
         }
     }
 
+    /**
+     * Резервный метод копирования для старых браузеров
+     * @param {string} text - Текст для копирования
+     */
     function fallbackCopy(text) {
-        // Старый метод для совместимости
         const textArea = document.createElement('textarea');
         textArea.value = text;
         textArea.style.position = 'fixed';
@@ -814,9 +1020,7 @@
         
         try {
             document.execCommand('copy');
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
+            triggerHaptic('success');
         } catch (err) {
             console.error('Не удалось скопировать:', err);
         }
@@ -824,111 +1028,14 @@
         document.body.removeChild(textArea);
     }
 
-    function getGrinderName(grinder) {
-        const names = {
-            'timemore_c3': 'Timemore C3',
-            'comandante': 'Comandante',
-            '1zpresso_jx': '1Zpresso JX',
-            '1zpresso_je': '1Zpresso JE'
-        };
-        return names[grinder] || grinder;
-    }
-
-    function getProcessName(process) {
-        const names = {
-            'washed': 'Мытая',
-            'natural': 'Натуральная',
-            'honey': 'Хани'
-        };
-        return names[process] || process;
-    }
-
-    function shareRecipe() {
-        if (tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('medium');
-        }
-
-        if (lastRecipeText) {
-            // Формируем текст для шаринга
-            const shareText = lastRecipeText + '\n\n🤖 Создано с помощью Coffee Calculator Bot';
-            
-            // Проверяем доступность switchInlineQuery (для ботов)
-            if (tg.initDataUnsafe && tg.initDataUnsafe.query_id) {
-                // Если есть query_id, можно отправить данные боту
-                tg.sendData(JSON.stringify({
-                    action: 'share_recipe',
-                    recipe: shareText
-                }));
-            } else {
-                // Используем showPopup для отображения рецепта с возможностью копирования
-                tg.showPopup({
-                    title: '📋 Рецепт готов!',
-                    message: 'Рецепт скопирован в буфер обмена. Теперь вы можете вставить его в любой чат Telegram.',
-                    buttons: [
-                        {id: 'copy', type: 'default', text: 'Скопировать еще раз'},
-                        {id: 'close', type: 'close', text: 'Закрыть'}
-                    ]
-                }, function(buttonId) {
-                    if (buttonId === 'copy') {
-                        copyToClipboard(shareText);
-                    }
-                });
-                
-                // Копируем в буфер обмена
-                copyToClipboard(shareText);
-            }
-        }
-    }
-
-    function copyToClipboard(text) {
-        // Для Telegram Mini App используем современный API
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(function() {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-            }).catch(function(err) {
-                // Fallback метод
-                fallbackCopy(text);
-            });
-        } else {
-            fallbackCopy(text);
-        }
-    }
-
-    function fallbackCopy(text) {
-        // Старый метод для совместимости
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-            document.execCommand('copy');
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        } catch (err) {
-            console.error('Не удалось скопировать:', err);
-        }
-        
-        document.body.removeChild(textArea);
-    }
-
-    window.onload = function() {
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    
+    /**
+     * Автоматический расчет при загрузке страницы
+     */
+    window.onload = () => {
         calculate();
     };
-
-    tg.onEvent('themeChanged', function() {
-        if (tg.colorScheme === 'dark') {
-            document.body.classList.add('dark-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-        }
-    });
 </script>
 
 </body>
