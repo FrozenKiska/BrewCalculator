@@ -18,7 +18,7 @@
             --coffee-bg-dark: #1a1614;
         }
 
-
+```
     /* ==================== БАЗОВЫЕ СТИЛИ ==================== */
     * {
         margin: 0;
@@ -252,14 +252,14 @@
         color: var(--coffee-teal);
     }
 </style>
-
+```
 
 </head>
 <body>
     <div class="container">
         <h1>☕ Калькулятор кофе</h1>
 
-
+```
     <!-- Выбор метода заваривания -->
     <div class="input-group">
         <label for="method">Метод заваривания:</label>
@@ -358,7 +358,7 @@
     <!-- Кнопка шаринга -->
     <button class="share-button hidden" id="shareButton" onclick="shareRecipe()">📤 Поделиться рецептом</button>
 </div>
-
+```
 
 <script>
     // ==================== ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP ====================
@@ -570,7 +570,7 @@
 
         // Расчет веса кофе и проливов
         const coffeeWeight = Math.round(volume / ratio);
-        const bloom = Math.round(coffeeWeight * 2);
+        const bloom = Math.round(coffeeWeight * 3); // Блюминг = кофе × 3
         
         // Определяем количество проливов по объему
         const pours = getPourSchedule(volume);
